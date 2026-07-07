@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HashGraph - Understand Smart Contracts</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- Design System Configuration -->
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "surface-tint": "#4d44e3",
+                "tertiary-fixed": "#e2e2e2",
+                "on-tertiary-fixed": "#1a1c1c",
+                "on-surface-variant": "#464555",
+                "primary": "#3525cd",
+                "surface-container-high": "#e8e7f1",
+                "on-tertiary-fixed-variant": "#454747",
+                "primary-fixed": "#e2dfff",
+                "on-primary": "#ffffff",
+                "secondary-container": "#e2e2e2",
+                "error-container": "#ffdad6",
+                "background": "#fbf8ff",
+                "surface-bright": "#fbf8ff",
+                "tertiary-container": "#5f6060",
+                "tertiary": "#474949",
+                "surface-container": "#eeedf7",
+                "inverse-surface": "#2f3038",
+                "surface-container-highest": "#e3e1ec",
+                "on-secondary-fixed": "#1b1b1b",
+                "on-error-container": "#93000a",
+                "on-surface": "#1a1b22",
+                "surface-container-lowest": "#ffffff",
+                "secondary": "#5e5e5e",
+                "outline-variant": "#c7c4d8",
+                "surface-dim": "#dad9e3",
+                "on-primary-fixed": "#0f0069",
+                "on-background": "#1a1b22",
+                "secondary-fixed-dim": "#c6c6c6",
+                "on-secondary": "#ffffff",
+                "outline": "#777587",
+                "on-tertiary": "#ffffff",
+                "error": "#ba1a1a",
+                "inverse-primary": "#c3c0ff",
+                "tertiary-fixed-dim": "#c6c6c7",
+                "secondary-fixed": "#e2e2e2",
+                "primary-fixed-dim": "#c3c0ff",
+                "surface": "#fbf8ff",
+                "primary-container": "#4f46e5",
+                "on-secondary-container": "#646464",
+                "on-error": "#ffffff",
+                "inverse-on-surface": "#f1effa",
+                "on-primary-fixed-variant": "#3323cc",
+                "on-tertiary-container": "#dbdbdb",
+                "surface-container-low": "#f4f2fd",
+                "surface-variant": "#e3e1ec",
+                "on-primary-container": "#dad7ff",
+                "on-secondary-fixed-variant": "#474747"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+        },
+        "spacing": {
+                "container-max": "1280px",
+                "xl": "40px",
+                "md": "16px",
+                "lg": "24px",
+                "xs": "4px",
+                "gutter": "24px",
+                "xxl": "80px",
+                "sm": "8px",
+                "base": "4px"
+        },
+        "fontFamily": {
+                "label-md": [
+                        "Geist"
+                ],
+                "body-lg": [
+                        "Inter"
+                ],
+                "mono-code": [
+                        "jetbrainsMono"
+                ],
+                "headline-xl": [
+                        "Geist"
+                ],
+                "headline-md": [
+                        "Geist"
+                ],
+                "body-sm": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Geist"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "headline-lg-mobile": [
+                        "Geist"
+                ]
+        },
+        "fontSize": {
+                "label-md": [
+                        "14px",
+                        {
+                                "lineHeight": "1",
+                                "letterSpacing": "0.02em",
+                                "fontWeight": "500"
+                        }
+                ],
+                "body-lg": [
+                        "18px",
+                        {
+                                "lineHeight": "1.6",
+                                "letterSpacing": "-0.01em",
+                                "fontWeight": "400"
+                        }
+                ],
+                "mono-code": [
+                        "14px",
+                        {
+                                "lineHeight": "1.6",
+                                "letterSpacing": "0",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-xl": [
+                        "48px",
+                        {
+                                "lineHeight": "1.1",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "700"
+                        }
+                ],
+                "headline-md": [
+                        "20px",
+                        {
+                                "lineHeight": "1.4",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-sm": [
+                        "14px",
+                        {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg": [
+                        "32px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.03em",
+                                "fontWeight": "600"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "1.5",
+                                "letterSpacing": "0",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-lg-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "1.2",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "600"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        /* Custom Styles & Overrides */
+        body {
+            background-color: #FAFAFA; /* Overriding for specific user prompt request */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Ambient shadow for level 2 */
+        .shadow-ambient {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        }
+        
+        /* Glassmorphism for level 3 */
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid #E4E4E7;
+        }
+        
+        /* Status Indicator Animations */
+        .status-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        
+        /* Interactive Visualizer Canvas */
+        #protocolGraph {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body class="text-on-background min-h-screen flex flex-col selection:bg-primary-container selection:text-white">
+<!-- TopNavBar -->
+<header class="bg-surface/80 backdrop-blur-xl dark:bg-surface-container-lowest/80 fixed top-0 w-full z-50 border-b border-outline-variant/30 dark:border-outline/20 shadow-sm dark:shadow-none transition-all duration-300 overflow-hidden">
+<canvas id="headerGraph" class="absolute inset-0 z-0 opacity-30 w-full h-full pointer-events-none"></canvas>
+<div class="relative z-10 flex justify-between items-center h-16 px-gutter max-w-container-max mx-auto w-full">
+<!-- Brand -->
+<div class="flex items-center gap-4">
+<a class="font-headline-md text-headline-md font-bold tracking-tighter text-on-surface dark:text-surface-bright flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">hexagon</span>
+                    HashGraph
+                </a>
+<span class="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-[#F4F4F5] text-tertiary border border-outline-variant/50 ml-2">
+                    Built for HashKey Chain
+                </span>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Documentation</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Schema</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">SDK</a>
+<a class="font-label-md text-label-md text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">GitHub</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<a class="font-label-md text-label-md bg-primary-container text-white px-4 py-2 rounded hover:bg-primary-container/90 transition-all duration-200 flex items-center gap-1 opacity-100 hover:opacity-90" href="#">
+                    Launch App
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pt-[120px] pb-xxl px-gutter max-w-container-max mx-auto w-full relative">
+<!-- Hero Section -->
+<section class="flex flex-col items-center text-center mt-xl mb-[120px] relative z-10">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#E4E4E7] shadow-sm mb-8 fade-in-up">
+<span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
+<span class="font-mono-code text-mono-code text-secondary text-xs">v2.0 Protocol Graph Live</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-background max-w-4xl tracking-tight leading-tight fade-in-up delay-100">
+                Understand Smart Contracts.<br/>
+<span class="text-tertiary">Not Just Their ABI.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-secondary max-w-3xl mt-6 fade-in-up delay-200">
+                Compile verified smart contracts into deterministic protocol graphs that AI agents, IDEs, and developers can understand instantly.
+            </p>
+<div class="flex flex-col sm:flex-row gap-4 mt-8 fade-in-up delay-300 w-full sm:w-auto">
+<div class="relative w-full sm:w-96 flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-secondary">search</span>
+<input id="address-input" class="w-full h-[48px] pl-10 pr-4 rounded bg-white border border-[#E4E4E7] focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 font-mono-code text-sm transition-all outline-none text-black" placeholder="Paste Contract Address (0x...)" type="text" value="0x1234567890123456789012345678901234567890"/>
+</div>
+<button id="analyze-btn" class="h-[48px] px-6 bg-primary-container text-white font-label-md text-label-md rounded hover:bg-primary-container/90 transition-colors whitespace-nowrap">
+                    Analyze Contract
+                </button>
+</div>
+</section>
+<!-- Visualization Canvas (Bento-style layout) -->
+<section class="relative w-full aspect-video md:aspect-[21/9] bg-white border border-[#E4E4E7] rounded-xl overflow-hidden shadow-sm fade-in-up delay-300">
+<!-- The Animation -->
+<div class="absolute inset-0 z-0 bg-[#09090B]">
+    <canvas id="protocolGraph"></canvas>
+    <div id="mermaid-container" class="absolute inset-0 z-10 w-full h-full flex items-center justify-center overflow-auto text-white p-6"></div>
+<!-- Subtle grid overlay for texture -->
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 24px 24px;"></div>
+</div>
+<!-- Floating Glass Panel (Live Status) -->
+<div class="absolute bottom-6 left-6 z-10 w-72 glass-panel rounded-lg p-4 shadow-ambient">
+<div class="flex items-center gap-2 mb-3 pb-2 border-b border-[#E4E4E7]/30">
+<span class="material-symbols-outlined text-[16px] text-primary-container">terminal</span>
+<h3 class="font-label-md text-label-md text-on-surface">Analysis Status</h3>
+</div>
+<ul class="space-y-2 font-mono-code text-[12px]">
+<li class="flex items-center gap-2 text-tertiary">
+<span class="material-symbols-outlined text-[14px] text-[#10B981]">check_circle</span>
+                        Paste Contract Address
+                    </li>
+<li class="flex items-center gap-2 text-tertiary">
+<span class="material-symbols-outlined text-[14px] text-[#10B981]">check_circle</span>
+                        Fetching ABI...
+                    </li>
+<li class="flex items-center gap-2 text-on-surface font-medium bg-white/50 p-1 -mx-1 rounded">
+<span class="w-1.5 h-1.5 bg-primary-container rounded-full status-pulse ml-0.5 mr-1"></span>
+                        Building Structural Graph...
+                    </li>
+<li class="flex items-center gap-2 text-[#A1A1AA] pl-0.5">
+<span class="material-symbols-outlined text-[14px]">pending</span>
+                        Semantic Enrichment...
+                    </li>
+<li class="flex items-center gap-2 text-[#A1A1AA] pl-0.5">
+<span class="material-symbols-outlined text-[14px]">pending</span>
+                        Protocol Graph Ready
+                    </li>
+</ul>
+</div>
+<!-- Floating Code Snippet (Top Right) -->
+<div class="hidden md:block absolute top-6 right-6 z-10 bg-[#09090B]/90 backdrop-blur-md border border-white/10 rounded-lg p-4 shadow-ambient max-w-xs w-full">
+<div class="flex items-center justify-between mb-2">
+<span class="font-mono-code text-[10px] text-white/50 uppercase tracking-wider">Semantic Query</span>
+<div class="flex gap-1.5">
+<div class="w-2 h-2 rounded-full bg-[#EF4444]"></div>
+<div class="w-2 h-2 rounded-full bg-[#F59E0B]"></div>
+<div class="w-2 h-2 rounded-full bg-[#10B981]"></div>
+</div>
+</div>
+<pre class="font-mono-code text-[11px] leading-relaxed text-[#A1A1AA]"><code><span class="text-primary-fixed-dim">query</span> ExtractLogic {
+  contract(id: <span class="text-[#34D399]">"0xDefi..."</span>) {
+    functions {
+      name
+      <span class="text-white">riskLevel</span>
+      executionPath {
+        calls
+      }
+    }
+  }
+}</code></pre>
+</div>
+</section>
+<!-- Feature Grid (High-end layout) -->
+<section class="mt-xxl grid grid-cols-1 md:grid-cols-3 gap-6 fade-in-up">
+<!-- Card 1 -->
+<div class="bg-white border border-[#E4E4E7] rounded-lg p-6 hover:shadow-ambient transition-shadow group cursor-default">
+<div class="w-10 h-10 bg-[#F4F4F5] rounded flex items-center justify-center mb-4 group-hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined text-tertiary group-hover:text-primary-container transition-colors">account_tree</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Structural Compiler</h3>
+<p class="font-body-sm text-body-sm text-secondary">Deterministically extracts contracts, events, permissions and dependencies.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-white border border-[#E4E4E7] rounded-lg p-6 hover:shadow-ambient transition-shadow group cursor-default">
+<div class="w-10 h-10 bg-[#F4F4F5] rounded flex items-center justify-center mb-4 group-hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined text-tertiary group-hover:text-primary-container transition-colors">psychology</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Semantic Engine</h3>
+<p class="font-body-sm text-body-sm text-secondary">Converts deterministic facts into AI-readable knowledge with explainability.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-white border border-[#E4E4E7] rounded-lg p-6 hover:shadow-ambient transition-shadow group cursor-default">
+<div class="w-10 h-10 bg-[#F4F4F5] rounded flex items-center justify-center mb-4 group-hover:bg-primary-container/10 transition-colors">
+<span class="material-symbols-outlined text-tertiary group-hover:text-primary-container transition-colors">security</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">MCP Server</h3>
+<p class="font-body-sm text-body-sm text-secondary">Lets Cursor, Claude and other agents query protocol graphs directly.</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-surface-container-lowest w-full border-t border-outline-variant/30 dark:border-outline/20 mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center py-xl px-gutter max-w-container-max mx-auto w-full">
+<div class="mb-4 md:mb-0">
+<a class="font-headline-md text-headline-md font-bold text-on-surface flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">hexagon</span>
+                    HashGraph
+                </a>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">
+                    © 2024 HashGraph Protocol. All systems operational.
+                </p>
+</div>
+<nav class="flex items-center gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Status</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">GitHub</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Twitter</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant dark:text-on-secondary-fixed-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Security</a>
+</nav>
+</div>
+</footer>
+    <script>
+        // Simple scroll observer for fade-in elements
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+            document.getElementById('analyze-btn').addEventListener('click', async () => {
+                const address = document.getElementById('address-input').value;
+                if (!address) return;
+                
+                const btn = document.getElementById('analyze-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Analyzing...';
+                btn.disabled = true;
+                
+                try {
+                    const res = await fetch(`/api/compile?address=${address}`);
+                    const data = await res.json();
+                    
+                    if (data.error) throw new Error(data.error);
+                    
+                    // Stop animation and hide canvas when graph loads
+                    if (window.mainAnimation) {
+                        window.mainAnimation.stop();
+                    }
+                    document.getElementById('protocolGraph').style.display = 'none';
+                    
+                    const container = document.getElementById('mermaid-container');
+                    container.innerHTML = `<div class="mermaid">${data.mermaid}</div>`;
+                    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+                } catch (e) {
+                    alert("Error: " + e.message);
+                } finally {
+                    btn.textContent = 'Analyze Contract';
+                    btn.disabled = false;
+                }
+            });
+
+            // --- Interactive Visualizer Canvas Logic ---
+            function createInteractiveGraph(canvasId, isLightMode = false) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                let width, height;
+                let particles = [];
+                let animationId;
+                
+                // Mouse interaction radius
+                const mouse = { x: null, y: null, radius: 200 };
+                
+                // Premium Indigo Accent
+                const COLOR_ACCENT = '79, 70, 229'; // #4F46E5
+
+                function resize() {
+                    const rect = canvas.parentElement.getBoundingClientRect();
+                    width = canvas.width = rect.width;
+                    height = canvas.height = rect.height;
+                }
+
+                window.addEventListener('resize', () => {
+                    resize();
+                    initGraph();
+                });
+
+                canvas.addEventListener('mousemove', (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    mouse.x = e.clientX - rect.left;
+                    mouse.y = e.clientY - rect.top;
+                });
+
+                canvas.addEventListener('mouseleave', () => {
+                    mouse.x = null;
+                    mouse.y = null;
+                });
+
+                class Node {
+                    constructor(isCore = false) {
+                        this.x = Math.random() * width;
+                        this.y = Math.random() * height;
+                        this.vx = (Math.random() - 0.5) * 0.8;
+                        this.vy = (Math.random() - 0.5) * 0.8;
+                        
+                        // 20% of nodes are "core" (brighter, larger)
+                        this.isCore = isCore;
+                        this.baseRadius = this.isCore ? Math.random() * 2 + 3 : Math.random() * 1.5 + 1.5;
+                        this.radius = this.baseRadius;
+                    }
+
+                    draw() {
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                        
+                        if (this.isCore) {
+                            ctx.fillStyle = isLightMode ? '#1A1A1A' : '#F5F5F5';
+                            ctx.shadowBlur = 15;
+                            ctx.shadowColor = `rgba(${COLOR_ACCENT}, 0.9)`;
+                        } else {
+                            ctx.fillStyle = isLightMode ? '#A1A1AA' : '#71717A'; 
+                            ctx.shadowBlur = 0;
+                        }
+                        
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+
+                    update() {
+                        // Bounce off walls
+                        if (this.x > width || this.x < 0) this.vx = -this.vx;
+                        if (this.y > height || this.y < 0) this.vy = -this.vy;
+
+                        // Mouse repulsion physics
+                        if (mouse.x != null) {
+                            let dx = mouse.x - this.x;
+                            let dy = mouse.y - this.y;
+                            let distance = Math.sqrt(dx * dx + dy * dy);
+
+                            if (distance < mouse.radius) {
+                                const forceDirectionX = dx / distance;
+                                const forceDirectionY = dy / distance;
+                                const force = (mouse.radius - distance) / mouse.radius;
+                                
+                                // Push away from mouse
+                                this.x -= forceDirectionX * force * 3.5;
+                                this.y -= forceDirectionY * force * 3.5;
+                                
+                                // Swell up slightly when hovered
+                                this.radius = this.baseRadius + (force * 3);
+                            } else {
+                                if (this.radius > this.baseRadius) this.radius -= 0.1;
+                            }
+                        } else {
+                            if (this.radius > this.baseRadius) this.radius -= 0.1;
+                        }
+
+                        this.x += this.vx;
+                        this.y += this.vy;
+                        this.draw();
+                    }
+                }
+
+                function initGraph() {
+                    particles = [];
+                    // Dynamically scale node count based on screen size
+                    let numberOfNodes = (width * height) / 9000;
+                    for (let i = 0; i < numberOfNodes; i++) {
+                        particles.push(new Node(Math.random() > 0.8)); 
+                    }
+                }
+
+                function connect() {
+                    let opacityValue = 1;
+                    for (let a = 0; a < particles.length; a++) {
+                        for (let b = a; b < particles.length; b++) {
+                            let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x))
+                                         + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+
+                            // Connect nodes that are close to each other
+                            if (distance < (width / 5) * (height / 5)) {
+                                opacityValue = 1 - (distance / 18000);
+                                
+                                ctx.beginPath();
+                                ctx.strokeStyle = `rgba(${COLOR_ACCENT}, ${opacityValue * 0.25})`;
+                                ctx.lineWidth = 1;
+
+                                // Brighter, thicker lines if connecting to a core node
+                                if (particles[a].isCore || particles[b].isCore) {
+                                    ctx.lineWidth = 1.5;
+                                    ctx.strokeStyle = `rgba(${COLOR_ACCENT}, ${opacityValue * 0.7})`;
+                                }
+
+                                ctx.moveTo(particles[a].x, particles[a].y);
+                                ctx.lineTo(particles[b].x, particles[b].y);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                }
+
+                function animate() {
+                    animationId = requestAnimationFrame(animate);
+                    ctx.clearRect(0, 0, width, height);
+                    
+                    for (let i = 0; i < particles.length; i++) {
+                        particles[i].update();
+                    }
+                    connect();
+                }
+
+                // Boot up
+                resize();
+                initGraph();
+                animate();
+                
+                return {
+                    stop: () => cancelAnimationFrame(animationId),
+                    canvas
+                };
+            }
+
+            // Initialize both canvases
+            window.mainAnimation = createInteractiveGraph('protocolGraph', false);
+            createInteractiveGraph('headerGraph', true);
+        });
+    </script>
+</body></html>
