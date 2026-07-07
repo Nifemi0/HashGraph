@@ -37,9 +37,39 @@ Adhering to **ADR-015 (AI Never Creates Facts)**, the AI engine consumes the det
 - Developer Integration Notes
 *All AI outputs undergo strict Citation Validation against the deterministic graph.*
 
-## MCP API
+## MCP Server Usage
 
-The HashGraph MCP server provides the following tools:
+The HashGraph MCP server provides AI IDEs (like Cursor) and AI assistants (like Claude Desktop) direct access to compiled protocol graphs.
+
+### Integrating with Cursor
+
+1. Open Cursor Settings.
+2. Navigate to **Features > MCP**.
+3. Click **+ Add new MCP server**.
+4. Set Name: `HashGraph`
+5. Set Type: `command`
+6. Set Command: `npx tsx /absolute/path/to/HashGraph/src/server/index.ts`
+
+### Integrating with Claude Desktop
+
+Add the following to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "hashgraph": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "/absolute/path/to/HashGraph/src/server/index.ts"
+      ]
+    }
+  }
+}
+```
+
+### Available MCP Tools
+
 - `get_protocol_graph(address)`: Full semantic + deterministic schema.
 - `get_contract_summary(address)`: Lightweight summarization.
 - `explain_transaction(address, calldata)`: ABI-aware calldata explanation.
