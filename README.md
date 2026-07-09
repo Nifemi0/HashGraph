@@ -65,61 +65,72 @@ Adhering to **ADR-015 (AI Never Creates Facts)**, the AI engine consumes the det
 
 ## MCP Server Usage
 
-The HashGraph MCP server provides AI IDEs (like Cursor) and AI assistants (like Claude Desktop) direct access to compiled protocol graphs.
+HashGraph is primarily consumed as a Model Context Protocol (MCP) server. No repository clone is required to use it.
 
-### Integrating with Cursor
+### Quick Start: Use HashGraph in Cursor / Claude Desktop
 
-1. Open Cursor Settings.
-2. Navigate to **Features > MCP**.
-3. Click **+ Add new MCP server**.
-4. Set Name: `HashGraph`
-5. Set Type: `command`
-6. Set Command: `npm`
-7. Set Args: `run mcp` (Note: Run this inside the HashGraph workspace)
+Add this configuration to your AI client to enable HashGraph globally:
 
-### Integrating with Claude Desktop
-
-Add the following to your `claude_desktop_config.json`:
-
+#### For Claude Desktop
+Add this to your `claude_desktop_config.json` (located at `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS or `%APPDATA%/Claude/claude_desktop_config.json` on Windows):
 ```json
 {
   "mcpServers": {
     "hashgraph": {
-      "command": "npm",
-      "args": [
-        "run",
-        "mcp"
-      ],
-      "cwd": "/absolute/path/to/HashGraph"
+      "command": "npx",
+      "args": ["-y", "hashgraph-mcp"]
     }
   }
 }
 ```
 
-### Available MCP Tools
-
-- `get_protocol_graph(address)`: Full semantic + deterministic schema.
-- `get_contract_summary(address)`: Lightweight summarization.
-- `explain_transaction(address, calldata)`: ABI-aware calldata explanation.
-- `search_protocol(address, query)`: Semantic and structural search.
+#### For Cursor
+1. Open Cursor Settings.
+2. Navigate to **Features > MCP**.
+3. Click **+ Add new MCP server**.
+4. Set Name: `HashGraph`
+5. Set Type: `command`
+6. Set Command: `npx -y hashgraph-mcp`
 
 ---
 
-## Examples
+## What to Ask Claude/Cursor After Adding MCP
 
-**CLI Usage**
+Once integrated, restart your AI client, open a chat, and ask questions like:
+* *"Analyze HashKey Chain contract 0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029."*
+* *"Return the protocol graph, privileged functions, events, dependencies, and integration notes for CELA."*
+* *"Explain what this transaction calldata does using the HashGraph MCP server: 0xa9059cbb..."*
+
+---
+
+## Available MCP Tools
+
+HashGraph exposes the following tools directly to your AI client:
+- `get_protocol_graph(address)`: Compiles a smart contract into a structured JSON graph containing roles, dependencies, events, and intent.
+- `get_contract_summary(address)`: Returns a lightweight structural and metadata overview of a contract.
+- `explain_transaction(address, calldata)`: Decodes raw transaction calldata and evaluates safety.
+- `search_protocol(address, query)`: Searches the cached protocol graphs for privileges, standard interfaces, or variables.
+- `simulate_transaction(to, data, from, value)`: Simulates a transaction against the blockchain to see its outcome.
+- `read_contract(address, data)`: Reads state variables or view functions directly.
+- `get_source_code(address)`: Fetches fully resolved, unflattened Solidity source code for verified contracts.
+- `lookup_graph_attestation(address)`: Checks the on-chain HashKey Mainnet attestation registry.
+- `register_protocol_graph(address)`: Registers a deterministic protocol graph hash (gated by default).
+
+---
+
+## Local Development & Compilation
+
+If you want to run or build the project from source:
+
 ```bash
-# Fetch and export graph
-hashgraph compile 0x123... --export ./out
+# Start the MCP server locally in stdio transport mode
+npm run mcp
 
-# Explain a transaction
-hashgraph explain 0x123... 0xa9059cbb...
+# Run the local test suite
+npm test
 
-# Generate visual architecture
-hashgraph graph 0x123...
-
-# Run compiler performance benchmarks
-hashgraph benchmark
+# Build the MCP server bundle
+npm run build
 ```
 
 ## Dashboard & Visualization

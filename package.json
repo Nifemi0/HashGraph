@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build:mcp": "tsup src/server/mcp.ts --format cjs --target node20 --out-dir dist --clean",
+    "build": "npm run build:mcp",
     "prepublishOnly": "npm run build:mcp",
     "test": "vitest",
     "dashboard": "npx ts-node src/server/dashboard.ts",
