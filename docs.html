@@ -86,6 +86,7 @@
         /* Tooltip */
         .group:hover .tooltip { opacity: 1; visibility: visible; }
         .tooltip { transition: opacity 0.2s ease, visibility 0.2s ease; }
+        pre { max-width: 100%; overflow-x: auto; }
     </style>
 </head>
 <body class="antialiased">
@@ -175,13 +176,19 @@
             
             <h3 class="font-bold text-gray-900 mb-3">1. Global Installation</h3>
             <p class="text-sm text-gray-600 mb-3">Install the HashGraph MCP server globally on your machine:</p>
-            <div class="bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm text-gray-300">
+            <div class="relative bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm text-gray-300 group">
+                <button onclick="copyToClipboard(this, 'npm install -g hashgraph-mcp')" class="absolute right-3 top-3 text-xs bg-gray-800 text-gray-300 hover:text-white px-2 py-1 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1 shadow-md">
+                    <span class="material-symbols-outlined text-[12px]">content_copy</span> Copy
+                </button>
                 <span class="text-gray-500">$</span> npm install -g hashgraph-mcp
             </div>
 
             <h3 class="font-bold text-gray-900 mb-3">2. Run via NPX (Direct execution)</h3>
             <p class="text-sm text-gray-600 mb-3">Alternatively, run the server instantly without local installation:</p>
-            <div class="bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm text-gray-300">
+            <div class="relative bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm text-gray-300 group">
+                <button onclick="copyToClipboard(this, 'npx -y hashgraph-mcp')" class="absolute right-3 top-3 text-xs bg-gray-800 text-gray-300 hover:text-white px-2 py-1 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1 shadow-md">
+                    <span class="material-symbols-outlined text-[12px]">content_copy</span> Copy
+                </button>
                 <span class="text-gray-500">$</span> <span class="text-green-400">npx</span> -y hashgraph-mcp
             </div>
         </section>
@@ -364,8 +371,11 @@
                 The programmatic SDK is fully developed and exported directly from the published NPM package. You can install it and import the client class to build custom programmatic integrations:
             </p>
 
-            <div class="bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto">
-<pre class="font-mono text-sm text-gray-300">
+            <div class="relative bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto group">
+                <button onclick="copyToClipboard(this, document.getElementById('sdkCode').innerText)" class="absolute right-4 top-4 text-xs bg-gray-800 text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1.5 shadow-md">
+                    <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+                </button>
+<pre id="sdkCode" class="font-mono text-sm text-gray-300">
 <span class="text-purple-400">import</span> { HashGraphClient } <span class="text-purple-400">from</span> <span class="text-green-300">"hashgraph-mcp"</span>;
 
 <span class="text-gray-500">// Initialize client</span>
@@ -395,10 +405,10 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
             <h3 class="text-lg font-bold text-gray-900 mb-3">Claude Desktop Setup</h3>
             <p class="text-sm text-gray-500 mb-3">Add this to your <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>:</p>
             <div class="relative bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto group">
-                <button onclick="copyConfig()" class="absolute right-4 top-4 text-xs bg-gray-800 text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1.5 shadow-md">
-                    <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy Config
+                <button onclick="copyToClipboard(this, document.getElementById('claudeConfigCode').innerText)" class="absolute right-4 top-4 text-xs bg-gray-800 text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1.5 shadow-md">
+                    <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
                 </button>
-<pre class="font-mono text-sm text-gray-300">
+<pre id="claudeConfigCode" class="font-mono text-sm text-gray-300">
 {
   <span class="text-blue-300">"mcpServers"</span>: {
     <span class="text-blue-300">"hashgraph"</span>: {
@@ -539,20 +549,16 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
 
     sections.forEach(section => observer.observe(section));
 
-    function copyConfig() {
-        const config = JSON.stringify({
-            mcpServers: {
-                hashgraph: {
-                    command: "npx",
-                    args: ["-y", "hashgraph-mcp"]
-                }
-            }
-        }, null, 2);
-        navigator.clipboard.writeText(config);
-        const btn = event.currentTarget;
-        const oldHtml = btn.innerHTML;
-        btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span> Copied!';
-        setTimeout(() => btn.innerHTML = oldHtml, 2000);
+    function copyToClipboard(btn, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span> Copied!';
+            btn.classList.add('bg-green-800/80', 'text-white');
+            setTimeout(() => {
+                btn.innerHTML = oldHtml;
+                btn.classList.remove('bg-green-800/80', 'text-white');
+            }, 2000);
+        });
     }
 </script>
 
