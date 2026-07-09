@@ -132,6 +132,17 @@ server.tool(
     "Register a deterministic protocol graph hash to the HashKey Chain mainnet",
     { address: z.string(), graphHash: z.string(), metadataURI: z.string() },
     async ({ address, graphHash, metadataURI }) => {
+        if (process.env.HASHGRAPH_ENABLE_WRITES !== "true") {
+            return { 
+                content: [{ 
+                    type: "text", 
+                    text: JSON.stringify({ 
+                        error: "Write operations are disabled by default on this MCP server. To enable registry attestations, set HASHGRAPH_ENABLE_WRITES=true in your environment variables." 
+                    }, null, 2) 
+                }], 
+                isError: true 
+            };
+        }
         try {
             const txHash = await registerGraph(address, graphHash, metadataURI);
             return { content: [{ type: "text", text: JSON.stringify({ txHash, status: "success" }, null, 2) }] };

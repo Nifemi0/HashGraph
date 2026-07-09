@@ -1,6 +1,6 @@
 {
   "name": "hashgraph-mcp",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Deterministic Protocol Intelligence compiler for AI. Compiles smart contracts into Protocol Graphs via MCP.",
   "main": "dist/mcp.js",
   "bin": {
@@ -10,8 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/server/mcp.ts --format cjs --target node20 --out-dir dist --clean",
-    "prepublishOnly": "npm run build",
+    "build:mcp": "tsup src/server/mcp.ts --format cjs --target node20 --out-dir dist --clean",
+    "prepublishOnly": "npm run build:mcp",
     "test": "vitest",
     "dashboard": "npx ts-node src/server/dashboard.ts",
     "mcp": "npx tsx src/server/mcp.ts"
@@ -28,6 +28,14 @@
   ],
   "author": "HashGraph",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nifemi0/HashGraph.git"
+  },
+  "homepage": "https://hashgraph-eight.vercel.app",
+  "bugs": {
+    "url": "https://github.com/Nifemi0/HashGraph/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "better-sqlite3": "^12.11.1",

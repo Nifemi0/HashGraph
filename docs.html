@@ -3,7 +3,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HashGraph - Understand Smart Contracts</title>
+    <title>HashGraph Documentation - API and SDK Reference</title>
+    <meta name="description" content="HashGraph compiles HashKey Chain smart contracts into structured Protocol Graphs that Cursor, Claude, and AI coding agents can query instantly through MCP.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬡</text></svg>">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hashgraph-eight.vercel.app/docs.html">
+    <meta property="og:title" content="HashGraph Documentation - API and SDK Reference">
+    <meta property="og:description" content="Compiles HashKey Chain smart contracts into structured Protocol Graphs for Cursor, Claude, and AI coding agents.">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://hashgraph-eight.vercel.app/docs.html">
+    <meta property="twitter:title" content="HashGraph Documentation - API and SDK Reference">
+    <meta property="twitter:description" content="Compiles HashKey Chain smart contracts into structured Protocol Graphs for Cursor, Claude, and AI coding agents.">
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -181,18 +193,13 @@
         <section id="quickstart" class="scroll-mt-32">
             <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">Quick Start</h2>
             <p class="text-gray-600 mb-6 leading-relaxed">
-                You can interact with HashGraph in three ways: via the SDK in your node apps, via the CLI for immediate terminal feedback, or via the MCP Server for AI agents.
+                HashGraph is designed to be consumed directly by AI agents. You can run the MCP Server with zero configuration.
             </p>
             
-            <h3 class="font-bold text-gray-900 mb-3">1. CLI (Zero Config)</h3>
-            <p class="text-sm text-gray-600 mb-3">Analyze any contract on HashKey Chain instantly from your terminal without installing dependencies.</p>
+            <h3 class="font-bold text-gray-900 mb-3">MCP Server (Zero Config)</h3>
+            <p class="text-sm text-gray-600 mb-3">Run the Model Context Protocol server locally or integrate it directly into Cursor/Claude:</p>
             <div class="bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm">
-                <span class="text-gray-500">$</span> <span class="text-green-400">npx</span> @hashkey/hashgraph-cli analyze 0x4200000000000000000000000000000000000015
-            </div>
-
-            <h3 class="font-bold text-gray-900 mb-3">2. Node.js SDK</h3>
-            <div class="bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm text-gray-300">
-                <span class="text-gray-500">$</span> npm install @hashkey/hashgraph-sdk
+                <span class="text-gray-500">$</span> <span class="text-green-400">npx</span> -y hashgraph-mcp
             </div>
         </section>
 
@@ -369,14 +376,14 @@
 
         <!-- SDK -->
         <section id="sdk" class="scroll-mt-32 pt-12 border-t border-gray-200">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">SDK Integration</h2>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">SDK Integration (Coming Soon)</h2>
             <p class="text-gray-600 mb-8 leading-relaxed">
-                Integrate HashGraph directly into your node applications to fetch protocol graphs programmatically. The SDK handles proxy resolution, caching, and retries automatically.
+                The programmatic SDK is currently in developer preview. You can import the client class directly from the source repository to build custom integrations:
             </p>
 
             <div class="bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto">
 <pre class="font-mono text-sm text-gray-300">
-<span class="text-purple-400">import</span> { HashGraphClient } <span class="text-purple-400">from</span> <span class="text-green-300">"@hashkey/hashgraph-sdk"</span>;
+<span class="text-purple-400">import</span> { HashGraphClient } <span class="text-purple-400">from</span> <span class="text-green-300">"./src/sdk/client"</span>;
 
 <span class="text-gray-500">// Initialize client</span>
 <span class="text-purple-400">const</span> client = <span class="text-purple-400">new</span> HashGraphClient({
@@ -404,7 +411,10 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
 
             <h3 class="text-lg font-bold text-gray-900 mb-3">Claude Desktop Setup</h3>
             <p class="text-sm text-gray-500 mb-3">Add this to your <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>:</p>
-            <div class="bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto">
+            <div class="relative bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto group">
+                <button onclick="copyConfig()" class="absolute right-4 top-4 text-xs bg-gray-800 text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1.5 shadow-md">
+                    <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy Config
+                </button>
 <pre class="font-mono text-sm text-gray-300">
 {
   <span class="text-blue-300">"mcpServers"</span>: {
@@ -535,6 +545,22 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
     }, { rootMargin: '-20% 0px -70% 0px' });
 
     sections.forEach(section => observer.observe(section));
+
+    function copyConfig() {
+        const config = JSON.stringify({
+            mcpServers: {
+                hashgraph: {
+                    command: "npx",
+                    args: ["-y", "hashgraph-mcp"]
+                }
+            }
+        }, null, 2);
+        navigator.clipboard.writeText(config);
+        const btn = event.currentTarget;
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span> Copied!';
+        setTimeout(() => btn.innerHTML = oldHtml, 2000);
+    }
 </script>
 
 </body>

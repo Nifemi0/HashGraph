@@ -144,18 +144,7 @@ npm run dashboard
 **"Why HashKey?"**
 > Better developer tooling reduces integration friction. HashGraph makes HashKey protocols easier for both developers and AI coding agents to understand, which can accelerate ecosystem adoption.
 
----
 
-## Demo Script (90 Seconds)
-
-- **0–10s [Problem]**: *"LLMs understand code, but they don't understand protocols."*
-- **10–25s [Action]**: Paste a complex contract address into the HashGraph Dashboard.
-- **25–40s [Compilation]**: The deterministic compiler runs. Structural statistics populate (Roles, Events, Dependencies).
-- **40–55s [Visualization]**: The Protocol Graph appears (Mermaid). AI Semantic Enrichment streams in (Intent, Security Guardrails).
-- **55–70s [Integration]**: Switch to Cursor IDE connected via MCP. Ask: *"What does this contract do?"*
-- **70–90s [Closing]**: Cursor uses the `get_protocol_graph` tool and outputs a perfect explanation with zero hallucinations. *"HashGraph: Deterministic by design. Explainable by AI."*
-
----
 
 ## License
 MIT License

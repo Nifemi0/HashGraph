@@ -3,7 +3,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HashGraph - Understand Smart Contracts</title>
+    <title>HashGraph - Deterministic Protocol Intelligence for AI</title>
+    <meta name="description" content="HashGraph compiles HashKey Chain smart contracts into structured Protocol Graphs that Cursor, Claude, and AI coding agents can query instantly through MCP.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬡</text></svg>">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://hashgraph-eight.vercel.app/">
+    <meta property="og:title" content="HashGraph - Deterministic Protocol Intelligence for AI">
+    <meta property="og:description" content="Compiles HashKey Chain smart contracts into structured Protocol Graphs for Cursor, Claude, and AI coding agents.">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://hashgraph-eight.vercel.app/">
+    <meta property="twitter:title" content="HashGraph - Deterministic Protocol Intelligence for AI">
+    <meta property="twitter:description" content="Compiles HashKey Chain smart contracts into structured Protocol Graphs for Cursor, Claude, and AI coding agents.">
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -124,15 +136,21 @@
             HashGraph compiles smart contracts into deterministic Protocol Graphs that Cursor, Claude, and any AI agent can consume.
         </p>
         <div class="flex flex-col sm:flex-row gap-0 rounded-full shadow-sm border border-gray-300 w-full max-w-md mx-auto bg-white overflow-hidden pointer-events-auto">
-            <input type="text" placeholder="Paste Contract (0x...)" class="flex-1 px-4 py-3 outline-none text-sm font-mono placeholder-gray-400" />
+            <input type="text" aria-label="Contract address" id="contractAddressInput" placeholder="Paste Contract (0x...)" class="flex-1 px-4 py-3 outline-none text-sm font-mono placeholder-gray-400" />
             <button id="analyzeBtn" class="bg-black text-white px-6 py-3 text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-2 justify-center rounded-r-full">
-                Analyze <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                Analyze <span class="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_forward</span>
             </button>
         </div>
+        <p class="text-xs text-gray-500 mt-3 pointer-events-auto">
+            Supported Chain: <span class="font-semibold text-gray-700">HashKey Chain</span>. Try these examples: 
+            <span onclick="document.getElementById('contractAddressInput').value = '0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029'" class="underline cursor-pointer hover:text-black transition-colors font-mono">CELA</span>, 
+            <span onclick="document.getElementById('contractAddressInput').value = '0x06D116F366EA95e949D9ff85756F170F6227D043'" class="underline cursor-pointer hover:text-black transition-colors font-mono">veHSK</span>, or 
+            <span onclick="document.getElementById('contractAddressInput').value = '0xcd32e361b60d50dbca08a7feb22b9ab38fa73813'" class="underline cursor-pointer hover:text-black transition-colors font-mono">DOGS</span>
+        </p>
         <div class="mt-8 flex items-center justify-center pointer-events-auto">
-            <div class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-5 py-2.5 border border-gray-200 rounded-full text-sm text-gray-700 font-mono shadow-sm group hover:border-gray-300 transition-all cursor-copy" onclick="navigator.clipboard.writeText('npm install @hashkey/hashgraph-sdk'); const i=this.querySelector('i'); i.innerText='check'; setTimeout(()=>i.innerText='content_copy', 2000);">
-                <span class="text-gray-400">$</span> npm install @hashkey/hashgraph-sdk
-                <i class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-gray-900 transition-colors">content_copy</i>
+            <div class="flex items-center gap-3 bg-white/90 backdrop-blur-md px-5 py-2.5 border border-gray-200 rounded-full text-sm text-gray-700 font-mono shadow-sm group hover:border-gray-300 transition-all cursor-copy" onclick="navigator.clipboard.writeText('npx -y hashgraph-mcp'); const i=this.querySelector('i'); i.innerText='check'; setTimeout(()=>i.innerText='content_copy', 2000);">
+                <span class="text-gray-400">$</span> npx -y hashgraph-mcp
+                <i class="material-symbols-outlined text-[16px] text-gray-400 group-hover:text-gray-900 transition-colors" aria-hidden="true">content_copy</i>
             </div>
         </div>
         <div class="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500 font-medium pointer-events-auto">
