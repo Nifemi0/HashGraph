@@ -74,7 +74,8 @@ The HashGraph MCP server provides AI IDEs (like Cursor) and AI assistants (like 
 3. Click **+ Add new MCP server**.
 4. Set Name: `HashGraph`
 5. Set Type: `command`
-6. Set Command: `npx tsx /absolute/path/to/HashGraph/src/server/index.ts`
+6. Set Command: `npm`
+7. Set Args: `run mcp` (Note: Run this inside the HashGraph workspace)
 
 ### Integrating with Claude Desktop
 
@@ -84,11 +85,12 @@ Add the following to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "hashgraph": {
-      "command": "npx",
+      "command": "npm",
       "args": [
-        "tsx",
-        "/absolute/path/to/HashGraph/src/server/index.ts"
-      ]
+        "run",
+        "mcp"
+      ],
+      "cwd": "/absolute/path/to/HashGraph"
     }
   }
 }
