@@ -53,18 +53,18 @@ class MockLLM implements ILLMProvider {
   async generate(sys: string, user: string): Promise<string> {
     if (user.includes("intent")) {
       return JSON.stringify({
-        intent: { value: "mock intent", derived_from: ["Owner"] },
-        user_goal: { value: "mock goal", derived_from: ["Deposit event"] }
+        intent: { value: "mock intent", derived_from: ["roles"] },
+        user_goal: { value: "mock goal", derived_from: ["events"] }
       });
     }
     if (user.includes("guardrails")) {
       return JSON.stringify({
-        guardrails: [{ value: "mock guard", derived_from: ["Owner"] }]
+        guardrails: [{ value: "mock guard", derived_from: ["roles"] }]
       });
     }
     if (user.includes("integration_notes")) {
       return JSON.stringify({
-        integration_notes: [{ value: "mock note", derived_from: ["Deposit event"] }]
+        integration_notes: [{ value: "mock note", derived_from: ["events"] }]
       });
     }
     return "{}";
@@ -91,8 +91,8 @@ describe('SemanticEnrichment', () => {
     expect(result.semantic.intent?.value).toBe("mock intent");
     expect(result.security.guardrails.length).toBe(1);
     expect(diagnostics.report).toContain("Explainability Report");
-    expect(diagnostics.report).toContain("Owner");
-    expect(diagnostics.report).toContain("Deposit event");
+    expect(diagnostics.report).toContain("roles");
+    expect(diagnostics.report).toContain("events");
     expect(result.semantic.model).toBe("gemini-2.5-pro");
   });
 

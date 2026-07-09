@@ -17,9 +17,35 @@ LLMs understand code, but they don't understand protocols. A protocol is an emer
 
 ---
 
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Nifemi0/HashGraph.git
+cd HashGraph
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+```
+
 ## Architecture
 
-`Input Contract` ↓ `Blockscout Fetcher` ↓ `Normalizer` ↓ `Deterministic Compiler` ↓ `HashGraph Schema` ↓ `Semantic Enrichment` ↓ `Cache` ↓ `MCP Server` ↓ `Cursor / Gemini / Claude`
+```mermaid
+graph TD
+    A[Input Contract] -->|Fetch| B(Blockscout Fetcher)
+    B --> C(Normalizer)
+    C --> D(Deterministic Compiler)
+    D --> E{HashGraph Schema}
+    E --> F(Semantic Enrichment)
+    F --> G[(SQLite Cache)]
+    G --> H[MCP Server]
+    H -->|Query| I(Cursor / Gemini / Claude)
+    
+    style E fill:#4f46e5,stroke:#333,stroke-width:2px,color:#fff
+```
 
 ## Compiler Pipeline
 

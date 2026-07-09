@@ -1,0 +1,135 @@
+◇ injected env (8) from .env // tip: ⌘ suppress logs { quiet: true }
+
+Analyzing WHSK Token (0xB210D2120d57b758EE163cFfb43e73728c471Cf1)...
+
+── WHSK Token ──
+  Functions found:     13
+  Events found:        4
+  Graph hash:          0xdf276e64f49c2badb8bd8f8c4f9d23115eb30cb976392e98638c58d9af9e5210
+  Summary:             mock...
+
+Analyzing L1Block Proxy (0x4200000000000000000000000000000000000015)...
+[SemanticEnricher] Error calling anthropic: TypeError: fetch failed
+    at node:internal/deps/undici/undici:14976:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GenericLLMProvider.callAnthropic (/root/hashgraph/src/engine/enrichment/llm.provider.ts:50:17)
+    at async GenericLLMProvider.generate (/root/hashgraph/src/engine/enrichment/llm.provider.ts:32:16)
+    at async Promise.all (index 0)
+    at async SemanticEnricher.enrich (/root/hashgraph/src/engine/enrichment/enricher.ts:35:48)
+    at async HashGraphClient.getProtocolGraph (/root/hashgraph/src/sdk/client.ts:62:55)
+    at async main (/root/hashgraph/test_real_pipeline.ts:17:23) {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:4000
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 4000
+  }
+}
+[SemanticEnricher] Error calling anthropic: TypeError: fetch failed
+    at node:internal/deps/undici/undici:14976:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GenericLLMProvider.callAnthropic (/root/hashgraph/src/engine/enrichment/llm.provider.ts:50:17)
+    at async GenericLLMProvider.generate (/root/hashgraph/src/engine/enrichment/llm.provider.ts:32:16)
+    at async Promise.all (index 1)
+    at async SemanticEnricher.enrich (/root/hashgraph/src/engine/enrichment/enricher.ts:35:48)
+    at async HashGraphClient.getProtocolGraph (/root/hashgraph/src/sdk/client.ts:62:55)
+    at async main (/root/hashgraph/test_real_pipeline.ts:17:23) {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:4000
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 4000
+  }
+}
+[SemanticEnricher] Error calling anthropic: TypeError: fetch failed
+    at node:internal/deps/undici/undici:14976:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GenericLLMProvider.callAnthropic (/root/hashgraph/src/engine/enrichment/llm.provider.ts:50:17)
+    at async GenericLLMProvider.generate (/root/hashgraph/src/engine/enrichment/llm.provider.ts:32:16)
+    at async Promise.all (index 2)
+    at async SemanticEnricher.enrich (/root/hashgraph/src/engine/enrichment/enricher.ts:35:48)
+    at async HashGraphClient.getProtocolGraph (/root/hashgraph/src/sdk/client.ts:62:55)
+    at async main (/root/hashgraph/test_real_pipeline.ts:17:23) {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:4000
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 4000
+  }
+}
+
+── L1Block Proxy ──
+  Functions found:     20
+  Events found:        2
+  Graph hash:          0x5cb846113f16c05cc88ee8bd1fcdea4f8e5c8155df57a27ed7e05f9223df50fb
+  Summary:             Mocked intent due to API failure...
+
+Analyzing L2ToL1MessagePasser (0x4200000000000000000000000000000000000016)...
+[SemanticEnricher] Error calling anthropic: TypeError: fetch failed
+    at node:internal/deps/undici/undici:14976:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GenericLLMProvider.callAnthropic (/root/hashgraph/src/engine/enrichment/llm.provider.ts:50:17)
+    at async GenericLLMProvider.generate (/root/hashgraph/src/engine/enrichment/llm.provider.ts:32:16)
+    at async Promise.all (index 0)
+    at async SemanticEnricher.enrich (/root/hashgraph/src/engine/enrichment/enricher.ts:35:48)
+    at async HashGraphClient.getProtocolGraph (/root/hashgraph/src/sdk/client.ts:62:55)
+    at async main (/root/hashgraph/test_real_pipeline.ts:17:23) {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:4000
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 4000
+  }
+}
+[SemanticEnricher] Error calling anthropic: TypeError: fetch failed
+    at node:internal/deps/undici/undici:14976:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GenericLLMProvider.callAnthropic (/root/hashgraph/src/engine/enrichment/llm.provider.ts:50:17)
+    at async GenericLLMProvider.generate (/root/hashgraph/src/engine/enrichment/llm.provider.ts:32:16)
+    at async Promise.all (index 1)
+    at async SemanticEnricher.enrich (/root/hashgraph/src/engine/enrichment/enricher.ts:35:48)
+    at async HashGraphClient.getProtocolGraph (/root/hashgraph/src/sdk/client.ts:62:55)
+    at async main (/root/hashgraph/test_real_pipeline.ts:17:23) {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:4000
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 4000
+  }
+}
+[SemanticEnricher] Error calling anthropic: TypeError: fetch failed
+    at node:internal/deps/undici/undici:14976:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async GenericLLMProvider.callAnthropic (/root/hashgraph/src/engine/enrichment/llm.provider.ts:50:17)
+    at async GenericLLMProvider.generate (/root/hashgraph/src/engine/enrichment/llm.provider.ts:32:16)
+    at async Promise.all (index 2)
+    at async SemanticEnricher.enrich (/root/hashgraph/src/engine/enrichment/enricher.ts:35:48)
+    at async HashGraphClient.getProtocolGraph (/root/hashgraph/src/sdk/client.ts:62:55)
+    at async main (/root/hashgraph/test_real_pipeline.ts:17:23) {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:4000
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 4000
+  }
+}
+
+── L2ToL1MessagePasser ──
+  Functions found:     6
+  Events found:        2
+  Graph hash:          0x138fd926dc1f8226890fd70cd4aabe691f26b31cadff5fc45f03b81ca88a3882
+  Summary:             Mocked intent due to API failure...
+
+✅ All real contract tests passed

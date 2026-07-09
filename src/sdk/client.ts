@@ -7,11 +7,7 @@ import { SemanticEnricher, ILLMProvider } from "../engine/enrichment/enricher";
 import { HashGraphSchema } from "../types/schema";
 import { decodeFunctionData } from "viem";
 
-class NoopLLM implements ILLMProvider {
-  async generate(): Promise<string> {
-    return "{}";
-  }
-}
+import { GenericLLMProvider } from "../engine/enrichment/llm.provider";
 
 export class HashGraphClient {
   private cache: HashGraphCache;
@@ -27,7 +23,7 @@ export class HashGraphClient {
     this.repo = new BlockscoutRepository();
     this.normalizer = new DataNormalizer(this.repo);
     this.compiler = new CompilerPipeline();
-    this.enricher = new SemanticEnricher(llmProvider || new NoopLLM());
+    this.enricher = new SemanticEnricher(llmProvider || new GenericLLMProvider());
   }
 
   public async getProtocolGraph(address: string, forceRefresh = false): Promise<HashGraphSchema> {
@@ -103,15 +99,37 @@ export class HashGraphClient {
          const funcInfo = graph.security.privileged_functions.find(f => f.name === decoded.functionName) 
             || { classification: "public mutator", reason: "Standard public call" };
 
+         const serializeArgs = (args: readonly unknown[] | undefined) => {
+            if (!args) return [];
+            return args.map(arg => typeof arg === 'bigint' ? arg.toString() : arg);
+         };
+
          return {
             function: decoded.functionName,
-            args: decoded.args,
+            args: serializeArgs(decoded.args),
             classification: funcInfo.classification,
             reason: funcInfo.reason
          };
       } catch (e: any) {
          return { error: "Failed to decode transaction", details: e.message };
       }
+  }
+
+  public async simulateTransaction(to: string, data: string, from?: string, value?: string): Promise<any> {
+      const { TransactionSimulator } = await import("../engine/simulator");
+      const simulator = new TransactionSimulator();
+      return await simulator.simulate(to, data, from, value);
+  }
+
+  public async readContract(address: string, data: string): Promise<any> {
+      const { TransactionSimulator } = await import("../engine/simulator");
+      const simulator = new TransactionSimulator();
+      return await simulator.read(address, data);
+  }
+
+  public async getSourceCode(address: string): Promise<string | null> {
+      const normalized = await this.normalizer.normalize(address);
+      return normalized.sourceCode;
   }
 
   public async searchProtocol(address: string, query: string): Promise<any[]> {

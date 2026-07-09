@@ -84,6 +84,15 @@ export const DeveloperSchema = z.object({
   verified: z.boolean(),
 });
 
+export const RegistrySchema = z.object({
+  registered: z.boolean(),
+  verified: z.boolean(),
+  graphHash: z.string(),
+  metadataURI: z.string(),
+  registryAddress: z.string(),
+  deploymentNetwork: z.literal("HashKey Mainnet"),
+}).optional();
+
 export const HashGraphZodSchema = z.object({
   metadata: MetadataSchema,
   statistics: StatisticsSchema,
@@ -91,6 +100,7 @@ export const HashGraphZodSchema = z.object({
   semantic: SemanticSchema,
   security: SecuritySchema,
   developer: DeveloperSchema,
+  registry: RegistrySchema,
 });
 
 export type HashGraphSchema = z.infer<typeof HashGraphZodSchema>;

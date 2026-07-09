@@ -8,9 +8,9 @@ export class EventExtractor implements GraphExtractor<EventResult> {
 
         if (input.abi) {
             for (const item of input.abi) {
-                if (item.type === "event" && item.name) {
+                if ((item.type === "event" || item.type === "error") && item.name) {
                     events.push({
-                        name: item.name,
+                        name: item.type === "error" ? `[Error] ${item.name}` : item.name,
                         source: "ABI"
                     });
                 }

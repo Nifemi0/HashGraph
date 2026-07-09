@@ -76,6 +76,33 @@ export class CompilerPipeline {
         const graph = this.assembler.assemble(input, roles, events, functions, deps, score, extractionTimeMs);
         diagnostics.stage_times['GraphAssembler'] = performance.now() - assembleStart;
 
+        // 7. Hash & Registry Lookup
+        const registryStart = performance.now();
+        const crypto = require("crypto");
+        // Create a deterministic hash string (sort keys to be safe, but JSON.stringify on structured data is usually deterministic here since order is defined by Schema)
+        const hashInput = JSON.stringify({
+            address: input.address.toLowerCase(),
+            roles: graph.structural.roles,
+            events: graph.structural.events,
+            dependencies: graph.structural.dependencies,
+            functions: graph.security.privileged_functions
+        });
+        const graphHash = "0x" + crypto.createHash("sha256").update(hashInput).digest("hex");
+        
+        // Dynamic import to avoid circular or strict module issues if any, but regular import is fine too.
+        const { lookupGraph } = require("../../chain/registry");
+        const attestation = await lookupGraph(input.address);
+        
+        graph.registry = {
+            registered: !!attestation,
+            verified: attestation ? attestation.graphHash === graphHash : false,
+            graphHash: graphHash,
+            metadataURI: attestation ? attestation.metadataURI : "",
+            registryAddress: process.env.REGISTRY_ADDRESS || "0x0000000000000000000000000000000000000000",
+            deploymentNetwork: "HashKey Mainnet"
+        };
+        diagnostics.stage_times['RegistryLookup'] = performance.now() - registryStart;
+
         // Trace Generation
         diagnostics.trace = this.generateTrace(compileId, evidence, score, extractionTimeMs);
 

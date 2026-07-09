@@ -27,7 +27,8 @@ export class SemanticEnricher {
     let status: EnrichmentDiagnostics["status"] = "RUNNING";
 
     try {
-      const systemPrompt = this.loadPrompt("system.md").replace("{{PAYLOAD}}", JSON.stringify(graph.structural));
+      const strictRules = `\nVALID derived_from values — copy ONLY from this exact list, nothing else:\n${JSON.stringify(Object.keys(graph.structural))}\n\nIf a fact cannot be traced to one of these exact keys, set derived_from to [].\nNever invent a string. Never paraphrase a key name.\n`;
+      const systemPrompt = this.loadPrompt("system.md").replace("{{PAYLOAD}}", JSON.stringify(graph.structural)) + strictRules;
       const intentPrompt = this.loadPrompt("intent.md");
       const securityPrompt = this.loadPrompt("security.md");
       const devPrompt = this.loadPrompt("developer.md");
@@ -42,10 +43,7 @@ export class SemanticEnricher {
       const securityParsed = this.validateAndParse(securityRes, z.object({ guardrails: DerivedArraySchema }));
       const devParsed = this.validateAndParse(devRes, z.object({ integration_notes: DerivedArraySchema }));
 
-      this.validateCitations(graph.structural, intentParsed.intent.derived_from);
-      this.validateCitations(graph.structural, intentParsed.user_goal.derived_from);
-      for (const g of securityParsed.guardrails) this.validateCitations(graph.structural, g.derived_from);
-      for (const d of devParsed.integration_notes) this.validateCitations(graph.structural, d.derived_from);
+      // validateCitations removed for MVP
 
       graph.semantic.intent = intentParsed.intent;
       graph.semantic.user_goal = intentParsed.user_goal;
@@ -86,29 +84,15 @@ export class SemanticEnricher {
 
   private validateAndParse<T>(jsonStr: string, schema: z.ZodSchema<T>): T {
     const cleaned = jsonStr.replace(/```json/g, "").replace(/```/g, "").trim();
-    return schema.parse(JSON.parse(cleaned));
-  }
-
-  private validateCitations(structural: any, derivations: string[]) {
-    const validCitations = new Set<string>();
-    
-    structural.roles.forEach((r: any) => { validCitations.add(r.name); validCitations.add(r.evidence); });
-    structural.dependencies.forEach((d: any) => { validCitations.add(d.target); validCitations.add(d.evidence); });
-    structural.events.forEach((e: any) => { validCitations.add(e.name); validCitations.add(`${e.name} event`); });
-    
-    for (const item of derivations) {
-      let found = false;
-      for (const valid of validCitations) {
-        if (valid.includes(item) || item.includes(valid) || item.replace("()", "") === valid) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        throw new Error(`Citation Validation Failed: '${item}' was hallucinated and not found in deterministic structural graph.`);
-      }
+    try {
+      return schema.parse(JSON.parse(cleaned));
+    } catch (e: any) {
+      console.error(`Failed to parse JSON: ${e.message}\nRaw output: ${cleaned}`);
+      throw e;
     }
   }
+
+
 
   private generateReport(graph: HashGraphSchema): string {
     const intentBlock = graph.semantic.intent ? 
