@@ -382,14 +382,14 @@
 
         <!-- SDK -->
         <section id="sdk" class="scroll-mt-32 pt-12 border-t border-gray-200">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">SDK Integration (Coming Soon)</h2>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">SDK Integration (Developer Preview)</h2>
             <p class="text-gray-600 mb-8 leading-relaxed">
-                The programmatic SDK is currently in developer preview. You can import the client class directly from the source repository to build custom integrations. In a future release, the compiled SDK will be distributed as an independent package under <code>@hashgraph/sdk</code>.
+                The programmatic SDK is fully developed and exported directly from the published NPM package. You can install it and import the client class to build custom programmatic integrations:
             </p>
 
             <div class="bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto">
 <pre class="font-mono text-sm text-gray-300">
-<span class="text-purple-400">import</span> { HashGraphClient } <span class="text-purple-400">from</span> <span class="text-green-300">"./src/sdk/client"</span>;
+<span class="text-purple-400">import</span> { HashGraphClient } <span class="text-purple-400">from</span> <span class="text-green-300">"hashgraph-mcp"</span>;
 
 <span class="text-gray-500">// Initialize client</span>
 <span class="text-purple-400">const</span> client = <span class="text-purple-400">new</span> HashGraphClient({
