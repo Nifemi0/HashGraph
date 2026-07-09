@@ -125,10 +125,10 @@
             </div>
         </div>
         
-        <div id="navRight" class="flex items-center justify-end gap-4 w-1/3 transition-all duration-300 px-4 py-2 rounded-full border border-transparent">
-            <span class="hidden xl:inline-block text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1.5 rounded-full">Built for HashKey Chain</span>
-            <a href="explorer.html" class="bg-black text-white px-5 py-2.5 text-sm font-medium rounded-full hover:bg-gray-800 transition-colors flex items-center gap-2">
-                Launch App <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        <div id="navRight" class="flex items-center justify-end gap-3 w-1/3 transition-all duration-300 px-4 py-2 rounded-full border border-transparent">
+            <span class="hidden xl:inline-block text-xs font-medium text-gray-500 border border-gray-200 px-3 py-1.5 rounded-full">HashKey</span>
+            <a href="explorer.html" class="border border-gray-900 text-gray-900 hover:bg-gray-50 px-4 py-2 text-sm font-medium rounded-full transition-colors flex items-center gap-1.5">
+                Launch <span class="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_forward</span>
             </a>
         </div>
     </div>
@@ -442,12 +442,36 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
                     <div class="text-sm text-gray-600 mt-1">Compiles a smart contract address into a structured JSON graph containing roles, dependencies, events, and intent.</div>
                 </div>
                 <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">get_contract_summary()</div>
+                    <div class="text-sm text-gray-600 mt-1">Returns a lightweight structural and metadata overview of a contract.</div>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
                     <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">explain_transaction()</div>
                     <div class="text-sm text-gray-600 mt-1">Decodes raw transaction calldata and evaluates its safety based on the compiled deterministic graph.</div>
                 </div>
                 <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
                     <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">search_protocol()</div>
                     <div class="text-sm text-gray-600 mt-1">Searches the cached protocol graphs for specific privileges, standard interfaces, or variables.</div>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">simulate_transaction()</div>
+                    <div class="text-sm text-gray-600 mt-1">Simulates a transaction against the blockchain to see its outcome without writing state.</div>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">read_contract()</div>
+                    <div class="text-sm text-gray-600 mt-1">Reads state variables or evaluates view functions directly from the contract.</div>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">get_source_code()</div>
+                    <div class="text-sm text-gray-600 mt-1">Fetches fully resolved, unflattened Solidity source code for verified contracts.</div>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">lookup_graph_attestation()</div>
+                    <div class="text-sm text-gray-600 mt-1">Checks the on-chain HashKey Mainnet attestation registry for a protocol graph hash.</div>
+                </div>
+                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">register_protocol_graph()</div>
+                    <div class="text-sm text-gray-600 mt-1">Registers a deterministic protocol graph hash to the mainnet registry (gated by default).</div>
                 </div>
             </div>
         </section>
