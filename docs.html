@@ -20,43 +20,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
     // Navbar Scroll Effect
-    const navLinks = document.getElementById('navLinks');
-    const navLeft = document.getElementById('navLeft');
-    const navRight = document.getElementById('navRight');
+    const navContainer = document.getElementById('navContainer');
     
-    if(navLinks) {
+    if(navContainer) {
         window.addEventListener('scroll', () => {
+            if (window.innerWidth < 768) return; // Keep solid pill on mobile always
             if (window.scrollY > 20) {
-                const pillClasses = ['bg-white/90', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200'];
-                navLinks.classList.add(...pillClasses);
-                navLinks.classList.remove('border-transparent');
-                
-                if(navLeft) {
-                    navLeft.classList.add(...pillClasses);
-                    navLeft.classList.remove('border-transparent');
-                }
-                if(navRight) {
-                    navRight.classList.add(...pillClasses);
-                    navRight.classList.remove('border-transparent');
-                }
+                navContainer.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                navContainer.classList.remove('md:bg-transparent', 'md:border-transparent', 'md:shadow-none');
             } else {
-                const pillClasses = ['bg-white/90', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200'];
-                navLinks.classList.remove(...pillClasses);
-                navLinks.classList.add('border-transparent');
-                
-                if(navLeft) {
-                    navLeft.classList.remove(...pillClasses);
-                    navLeft.classList.add('border-transparent');
-                }
-                if(navRight) {
-                    navRight.classList.remove(...pillClasses);
-                    navRight.classList.add('border-transparent');
-                }
+                navContainer.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                navContainer.classList.add('md:bg-transparent', 'md:border-transparent', 'md:shadow-none');
             }
         });
-</script>
+    }
+    </script>
 
     <script>
         tailwind.config = {
@@ -109,23 +90,19 @@
 </head>
 <body class="antialiased">
 
-<!-- Top Navigation -->
-<!-- Top Navigation -->
-<nav class="fixed top-0 w-full z-50 transition-all duration-300 pt-6">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-2">
-        <a href="index.html" id="navLeft" class="flex items-center gap-2 md:w-1/3 transition-all duration-300 px-3 sm:px-4 py-2 rounded-full border border-transparent hover:bg-gray-50/50 cursor-pointer">
+<nav class="fixed top-0 w-full z-50 transition-all duration-300 pt-4 px-4 sm:px-6">
+    <div id="navContainer" class="max-w-5xl mx-auto h-14 flex items-center justify-between gap-4 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm border border-gray-200 rounded-full px-6 md:bg-transparent md:border-transparent md:shadow-none md:px-8">
+        <a href="index.html" class="flex items-center gap-2 transition-all duration-300 hover:opacity-80">
             <span class="material-symbols-outlined text-gray-900" style="font-variation-settings: 'FILL' 1;">hexagon</span>
-            <span class="font-serif font-bold text-lg sm:text-xl tracking-tight">HashGraph</span>
+            <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-gray-900">HashGraph</span>
         </a>
         
-        <div class="flex-1 flex justify-center">
-            <div id="navLinks" class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium text-gray-500 transition-all duration-300 px-4 sm:px-8 py-2.5 sm:py-3 rounded-full border border-transparent">
-                <a href="docs.html" class="hover:text-gray-900 transition-colors">Docs</a>
-                <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 transition-colors">GitHub</a>
-            </div>
+        <div class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium text-gray-500 transition-all duration-300">
+            <a href="docs.html" class="hover:text-gray-900 transition-colors">Docs</a>
+            <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 transition-colors">GitHub</a>
         </div>
         
-        <div id="navRight" class="flex items-center justify-end gap-2 sm:gap-4 md:w-1/3 transition-all duration-300 px-3 sm:px-4 py-2 rounded-full border border-transparent">
+        <div class="flex items-center gap-2 sm:gap-4 transition-all duration-300">
             <span class="hidden xl:inline-block text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1.5 rounded-full">HashKey</span>
             <a href="explorer.html" class="bg-black text-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-full hover:bg-gray-800 transition-colors flex items-center gap-1.5 sm:gap-2">
                 Launch <span class="material-symbols-outlined text-[14px] sm:text-[16px]" aria-hidden="true">arrow_forward</span>
@@ -537,21 +514,7 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
         </div>
     </div>
 </footer>
-<script>
-    // Navbar Scroll Effect
-    const navLinks = document.getElementById('navLinks');
-    if(navLinks) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 20) {
-                navLinks.classList.add('bg-white/90', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
-                navLinks.classList.remove('border-transparent');
-            } else {
-                navLinks.classList.remove('bg-white/90', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
-                navLinks.classList.add('border-transparent');
-            }
-        });
-    }
-</script>
+
 
 
 <script>
