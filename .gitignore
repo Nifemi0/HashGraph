@@ -1,3 +1,6 @@
 .vercel
 node_modules/
 .env
+.npmrc
+check_addresses.mjs
+find_contracts.mjs

@@ -1,19 +1,31 @@
 {
-  "name": "hashgraph",
+  "name": "hashgraph-mcp",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
+  "description": "Deterministic Protocol Intelligence compiler for AI. Compiles smart contracts into Protocol Graphs via MCP.",
+  "main": "dist/mcp.js",
   "bin": {
-    "hashgraph": "./dist/cli/index.js"
+    "hashgraph-mcp": "./dist/mcp.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "vitest",
     "dashboard": "npx ts-node src/server/dashboard.ts",
     "mcp": "npx tsx src/server/mcp.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "hashkey",
+    "blockchain",
+    "smart-contracts",
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "protocol-graph",
+    "deterministic"
+  ],
+  "author": "HashGraph",
+  "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "better-sqlite3": "^12.11.1",
@@ -33,6 +45,7 @@
     "@types/node": "^26.1.0",
     "@types/semver": "^7.7.1",
     "ts-node": "^10.9.2",
+    "tsup": "^8.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   }
