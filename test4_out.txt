@@ -1,3 +1,0 @@
-Starting MCP server...
-[MCP Error] HashGraph MCP Server running on stdio
-✅ get_protocol_graph — returned metadata, statistics, structural, semantic, security, developer, registry

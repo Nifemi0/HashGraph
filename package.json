@@ -1,6 +1,6 @@
 {
   "name": "hashgraph-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Deterministic Protocol Intelligence compiler for AI. Compiles smart contracts into Protocol Graphs via MCP.",
   "main": "dist/mcp.js",
   "bin": {
@@ -10,6 +10,8 @@
     "dist"
   ],
   "scripts": {
+    "build": "tsup src/server/mcp.ts --format cjs --target node20 --out-dir dist --clean",
+    "prepublishOnly": "npm run build",
     "test": "vitest",
     "dashboard": "npx ts-node src/server/dashboard.ts",
     "mcp": "npx tsx src/server/mcp.ts"

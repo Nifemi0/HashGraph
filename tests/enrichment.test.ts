@@ -81,30 +81,17 @@ class HallucinatingLLM implements ILLMProvider {
 }
 
 describe('SemanticEnrichment', () => {
-  it('enriches graph, verifies citations, and generates report', async () => {
+  it('delegates semantic enrichment to client AI and returns SKIPPED status', async () => {
     const enricher = new SemanticEnricher(new MockLLM());
     const graph = getMockGraph();
     
     const { graph: result, diagnostics } = await enricher.enrich(graph);
     
-    expect(result.semantic.semantic_status).toBe("COMPLETE");
-    expect(result.semantic.intent?.value).toBe("mock intent");
+    expect(result.semantic.semantic_status).toBe("SKIPPED");
+    expect(result.semantic.intent?.value).toContain("delegated to client AI");
     expect(result.security.guardrails.length).toBe(1);
     expect(diagnostics.report).toContain("Explainability Report");
-    expect(diagnostics.report).toContain("roles");
-    expect(diagnostics.report).toContain("events");
-    expect(result.semantic.model).toBe("gemini-2.5-pro");
-  });
-
-  it('rejects hallucinated citations with FAILED status', async () => {
-    const enricher = new SemanticEnricher(new HallucinatingLLM());
-    const graph = getMockGraph();
-    
-    const { graph: result, diagnostics } = await enricher.enrich(graph);
-    
-    expect(result.semantic.semantic_status).toBe("FAILED");
-    expect(diagnostics.status).toBe("FAILED");
-    expect(result.semantic.intent).toBeNull(); // remains null
+    expect(result.semantic.semantic_status).toBe("SKIPPED");
   });
 });
 

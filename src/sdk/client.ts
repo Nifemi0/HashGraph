@@ -116,13 +116,13 @@ export class HashGraphClient {
   }
 
   public async simulateTransaction(to: string, data: string, from?: string, value?: string): Promise<any> {
-      const { TransactionSimulator } = await import("../engine/simulator");
+      const { TransactionSimulator } = await import("../engine/simulator.js");
       const simulator = new TransactionSimulator();
       return await simulator.simulate(to, data, from, value);
   }
 
   public async readContract(address: string, data: string): Promise<any> {
-      const { TransactionSimulator } = await import("../engine/simulator");
+      const { TransactionSimulator } = await import("../engine/simulator.js");
       const simulator = new TransactionSimulator();
       return await simulator.read(address, data);
   }

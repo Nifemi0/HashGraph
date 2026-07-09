@@ -8,7 +8,7 @@ app.use(cors());
 
 const client = new HashGraphClient();
 
-app.get("/api/compile", async (req, res) => {
+const handler = async (req: express.Request, res: express.Response) => {
     try {
         const address = req.query.address as string;
         if (!address) {
@@ -33,7 +33,10 @@ app.get("/api/compile", async (req, res) => {
     } catch (e: any) {
         res.status(500).json({ error: e.message });
     }
-});
+};
+
+app.get("/api/compile", handler);
+app.get("/api/analyze", handler);
 
 // Vercel routes everything under /api to this file if named api/index.ts.
 // But to be safe for root matching if we rewrite:

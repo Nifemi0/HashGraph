@@ -13,6 +13,8 @@ import { DependencyExtractor } from "./extractors/dependency.extractor";
 import { IntegrityBuilder, IntegrityScorer } from "./integrity.scorer";
 import { GraphAssembler } from "./graph.assembler";
 import { HashGraphSchema } from "../../types/schema";
+import crypto from "crypto";
+import { lookupGraph } from "../../chain/registry";
 
 export class CompilerPipeline {
     private roleExtractor = new RoleExtractor();
@@ -78,7 +80,6 @@ export class CompilerPipeline {
 
         // 7. Hash & Registry Lookup
         const registryStart = performance.now();
-        const crypto = require("crypto");
         // Create a deterministic hash string (sort keys to be safe, but JSON.stringify on structured data is usually deterministic here since order is defined by Schema)
         const hashInput = JSON.stringify({
             address: input.address.toLowerCase(),
@@ -89,8 +90,6 @@ export class CompilerPipeline {
         });
         const graphHash = "0x" + crypto.createHash("sha256").update(hashInput).digest("hex");
         
-        // Dynamic import to avoid circular or strict module issues if any, but regular import is fine too.
-        const { lookupGraph } = require("../../chain/registry");
         const attestation = await lookupGraph(input.address);
         
         graph.registry = {

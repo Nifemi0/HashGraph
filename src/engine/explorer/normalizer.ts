@@ -174,7 +174,7 @@ export class DataNormalizer {
     // Fallback for unverified contracts (Fix 1: Decompilation Pipeline)
     if (!abi || abi === "[]") {
         console.log(`[Normalizer] Contract unverified. Falling back to bytecode decompilation...`);
-        const { BytecodeDecompiler } = await import("./bytecode");
+        const { BytecodeDecompiler } = await import("./bytecode.js");
         const decompiler = new BytecodeDecompiler();
         const pseudoAbi = await decompiler.generatePseudoAbi(targetAddress);
         if (pseudoAbi) {

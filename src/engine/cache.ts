@@ -28,7 +28,11 @@ export class HashGraphCache {
   };
 
   constructor(dbDir: string = CACHE_CONFIG.DB_DIR, dbName: string = CACHE_CONFIG.DB_NAME) {
-    const fullDir = path.resolve(process.cwd(), dbDir);
+    let resolvedDbDir = dbDir;
+    if (process.env.VERCEL) {
+      resolvedDbDir = "/tmp";
+    }
+    const fullDir = path.isAbsolute(resolvedDbDir) ? resolvedDbDir : path.resolve(process.cwd(), resolvedDbDir);
     if (!fs.existsSync(fullDir)) {
       fs.mkdirSync(fullDir, { recursive: true });
     }

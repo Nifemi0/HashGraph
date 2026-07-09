@@ -1,6 +1,11 @@
-.vercel
 node_modules/
+dist/
 .env
 .npmrc
-check_addresses.mjs
-find_contracts.mjs
+data/*.db
+data_test/
+*.log
+*_out.txt
+cli_*.txt
+.vercel/
+.DS_Store

@@ -18,9 +18,9 @@ export class BytecodeDecompiler {
         const selectorRegex = /63([a-fA-F0-9]{8})14/g;
         const selectors = new Set<string>();
         
-        let match;
+        let match: RegExpExecArray | null;
         while ((match = selectorRegex.exec(bytecode)) !== null) {
-            selectors.add(match[1]);
+            if (match[1]) selectors.add(match[1]);
         }
 
         if (selectors.size === 0) return null;
@@ -57,7 +57,7 @@ export class BytecodeDecompiler {
                 abiItems.push({
                     type: "function",
                     name: name,
-                    inputs: args.map((t, i) => ({ type: t, name: `arg${i}` })),
+                    inputs: args.map((t: string, i: number) => ({ type: t, name: `arg${i}` })),
                     outputs: [],
                     stateMutability: "nonpayable"
                 });
