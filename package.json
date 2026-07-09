@@ -9,7 +9,7 @@
   "scripts": {
     "test": "vitest",
     "dashboard": "npx ts-node src/server/dashboard.ts",
-    "mcp": "npx tsx src/server/index.ts"
+    "mcp": "npx tsx src/server/mcp.ts"
   },
   "keywords": [],
   "author": "",
