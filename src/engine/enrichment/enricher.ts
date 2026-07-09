@@ -24,33 +24,31 @@ export class SemanticEnricher {
 
   public async enrich(graph: HashGraphSchema): Promise<{ graph: HashGraphSchema, diagnostics: EnrichmentDiagnostics }> {
     const start = performance.now();
-    let status: EnrichmentDiagnostics["status"] = "RUNNING";
+    let status: EnrichmentDiagnostics["status"] = "SKIPPED";
 
     try {
-      const strictRules = `\nVALID derived_from values — copy ONLY from this exact list, nothing else:\n${JSON.stringify(Object.keys(graph.structural))}\n\nIf a fact cannot be traced to one of these exact keys, set derived_from to [].\nNever invent a string. Never paraphrase a key name.\n`;
-      const systemPrompt = this.loadPrompt("system.md").replace("{{PAYLOAD}}", JSON.stringify(graph.structural)) + strictRules;
-      const intentPrompt = this.loadPrompt("intent.md");
-      const securityPrompt = this.loadPrompt("security.md");
-      const devPrompt = this.loadPrompt("developer.md");
+      // V2 Architecture: LLM generation is completely offloaded to the MCP Client.
+      // HashGraph acts purely as a deterministic compiler and serves the hard facts.
+      // The AI agent (Cursor, Claude, etc.) reads these facts and generates semantics locally.
 
-      const [intentRes, securityRes, devRes] = await Promise.all([
-        this.llm.generate(systemPrompt, intentPrompt),
-        this.llm.generate(systemPrompt, securityPrompt),
-        this.llm.generate(systemPrompt, devPrompt)
-      ]);
+      graph.semantic.intent = { 
+        value: "Semantic enrichment delegated to client AI.", 
+        derived_from: [] 
+      };
+      graph.semantic.user_goal = { 
+        value: "Semantic enrichment delegated to client AI.", 
+        derived_from: [] 
+      };
+      graph.security.guardrails = [{
+        value: "Security analysis delegated to client AI.",
+        derived_from: []
+      }];
+      graph.developer.integration_notes = [{
+        value: "Developer integration notes delegated to client AI.",
+        derived_from: []
+      }];
 
-      const intentParsed = this.validateAndParse(intentRes, z.object({ intent: DerivedStringSchema, user_goal: DerivedStringSchema }));
-      const securityParsed = this.validateAndParse(securityRes, z.object({ guardrails: DerivedArraySchema }));
-      const devParsed = this.validateAndParse(devRes, z.object({ integration_notes: DerivedArraySchema }));
-
-      // validateCitations removed for MVP
-
-      graph.semantic.intent = intentParsed.intent;
-      graph.semantic.user_goal = intentParsed.user_goal;
-      graph.security.guardrails = securityParsed.guardrails;
-      graph.developer.integration_notes = devParsed.integration_notes;
-
-      status = "COMPLETE";
+      status = "SKIPPED"; // Using SKIPPED to explicitly show internal LLM was bypassed
     } catch (e) {
       status = "FAILED";
       console.error(e);
