@@ -1,5 +1,11 @@
 ## Version History
 
+### v1.0.6
+- Fix `npx -y hashgraph-mcp` packaging:
+  - Ship `scripts/postinstall.js` in the npm tarball
+  - Postinstall never fails the install
+  - Best-effort `better-sqlite3` rebuild if native binding is missing
+
 ### v1.0.5
 - `HashGraphRegistry` live on **HashKey Mainnet** (chain id 177)
   - Address: `0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6`

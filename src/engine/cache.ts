@@ -1,4 +1,3 @@
-import Database from "better-sqlite3";
 import { HashGraphSchema, HashGraphZodSchema } from "../types/schema";
 import { CACHE_CONFIG } from "../config/cache";
 import { EVIDENCE_THRESHOLD } from "../config/thresholds";
@@ -17,8 +16,95 @@ export interface CacheMetrics {
   corrupted: number;
 }
 
+type Stmt = {
+  get: (...args: any[]) => any;
+  run: (...args: any[]) => any;
+};
+
+type DbLike = {
+  exec: (sql: string) => void;
+  prepare: (sql: string) => Stmt;
+};
+
+/** Minimal in-memory stand-in when better-sqlite3 native binding is unavailable. */
+class MemoryDb implements DbLike {
+  private graphs = new Map<string, any>();
+
+  exec(_sql: string) {}
+
+  prepare(sql: string): Stmt {
+    const s = sql.replace(/\s+/g, " ").trim().toLowerCase();
+    if (s.startsWith("select") && s.includes("from protocol_graphs")) {
+      return {
+        get: (contractAddress: string) => this.graphs.get(String(contractAddress).toLowerCase()),
+        run: () => {},
+      };
+    }
+    if (s.startsWith("insert") && s.includes("into protocol_graphs")) {
+      return {
+        get: () => undefined,
+        run: (
+          contractAddress: string,
+          schema_version: string,
+          enrichment_version: string,
+          structural_integrity_score: number,
+          data: string,
+          created_at: number,
+          expires_at: number | null
+        ) => {
+          this.graphs.set(String(contractAddress).toLowerCase(), {
+            data,
+            schema_version,
+            enrichment_version,
+            structural_integrity_score,
+            created_at,
+            expires_at,
+          });
+        },
+      };
+    }
+    if (s.startsWith("delete") && s.includes("from protocol_graphs") && s.includes("where contract_address")) {
+      return {
+        get: () => undefined,
+        run: (contractAddress: string) => {
+          this.graphs.delete(String(contractAddress).toLowerCase());
+        },
+      };
+    }
+    if (s.startsWith("delete") && s.includes("expires_at")) {
+      return {
+        get: () => undefined,
+        run: (now: number) => {
+          for (const [k, v] of this.graphs) {
+            if (v.expires_at !== null && v.expires_at < now) this.graphs.delete(k);
+          }
+        },
+      };
+    }
+    return { get: () => undefined, run: () => {} };
+  }
+}
+
+function openDatabase(dbPath: string): DbLike {
+  try {
+    // Lazy require so a missing native binding doesn't crash module load.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const Database = require("better-sqlite3");
+    return new Database(dbPath) as DbLike;
+  } catch (err: any) {
+    console.error(
+      "[HashGraphCache] better-sqlite3 unavailable — using in-memory cache.",
+      err?.message || err
+    );
+    console.error(
+      "[HashGraphCache] Tip: run `npm rebuild better-sqlite3` if you want disk persistence."
+    );
+    return new MemoryDb();
+  }
+}
+
 export class HashGraphCache {
-  private db: Database.Database;
+  private db: DbLike;
   private metrics: CacheMetrics = {
     hits: 0,
     misses: 0,
@@ -38,7 +124,7 @@ export class HashGraphCache {
     }
 
     const dbPath = path.join(fullDir, dbName);
-    this.db = new Database(dbPath);
+    this.db = openDatabase(dbPath);
     this.initDatabase();
   }
 
@@ -66,7 +152,7 @@ export class HashGraphCache {
       FROM protocol_graphs
       WHERE contract_address = ?
     `);
-    
+
     const row = stmt.get(contractAddress) as {
       data: string;
       schema_version: string;
@@ -106,7 +192,7 @@ export class HashGraphCache {
     try {
       const parsedData = JSON.parse(row.data);
       const validGraph = HashGraphZodSchema.parse(parsedData);
-      
+
       validGraph.metadata.cache_status = "HIT";
       this.metrics.hits++;
       return validGraph;
@@ -119,17 +205,18 @@ export class HashGraphCache {
   }
 
   public set(contractAddress: string, graph: HashGraphSchema): void {
-    const evidenceScore = 
+    const evidenceScore =
       (graph.semantic.structural_integrity_score +
-       graph.security.structural_integrity_score +
-       graph.developer.structural_integrity_score) / 3;
+        graph.security.structural_integrity_score +
+        graph.developer.structural_integrity_score) /
+      3;
 
     let ttlSeconds = CACHE_CONFIG.VERIFIED_TTL;
     if (evidenceScore < EVIDENCE_THRESHOLD.LOW) {
       ttlSeconds = CACHE_CONFIG.LOW_EVIDENCE_TTL;
     }
 
-    const expiresAt = Date.now() + (ttlSeconds * 1000);
+    const expiresAt = Date.now() + ttlSeconds * 1000;
 
     const stmt = this.db.prepare(`
       INSERT INTO protocol_graphs (
@@ -152,7 +239,7 @@ export class HashGraphCache {
 
     graph.metadata.schema_version = CURRENT_SCHEMA_VERSION;
     graph.metadata.enrichment_version = CURRENT_ENRICHMENT_VERSION;
-    
+
     // Explicitly reset cache_status to MISS before saving so if fetched outside, it's correct
     graph.metadata.cache_status = "MISS";
 
@@ -165,7 +252,7 @@ export class HashGraphCache {
       Date.now(),
       expiresAt
     );
-    
+
     this.metrics.writes++;
   }
 
@@ -174,11 +261,13 @@ export class HashGraphCache {
   }
 
   public cleanupExpiredEntries(): void {
-    const stmt = this.db.prepare("DELETE FROM protocol_graphs WHERE expires_at IS NOT NULL AND expires_at < ?");
+    const stmt = this.db.prepare(
+      "DELETE FROM protocol_graphs WHERE expires_at IS NOT NULL AND expires_at < ?"
+    );
     stmt.run(Date.now());
   }
-  
-  public _getDbForTesting(): Database.Database {
+
+  public _getDbForTesting(): DbLike {
     return this.db;
   }
 }

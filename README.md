@@ -18,7 +18,7 @@ Compiles HashKey Chain smart contracts into structured **Protocol Graphs** that 
 | **Live site** | https://hashgraph-eight.vercel.app |
 | **Explorer** | https://hashgraph-eight.vercel.app/explorer.html |
 | **Docs** | https://hashgraph-eight.vercel.app/docs.html |
-| **npm** | `hashgraph-mcp@1.0.5` · https://www.npmjs.com/package/hashgraph-mcp |
+| **npm** | `hashgraph-mcp@1.0.6` · https://www.npmjs.com/package/hashgraph-mcp |
 | **GitHub** | https://github.com/Nifemi0/HashGraph |
 | **Submission pack** | [SUBMISSION.md](./SUBMISSION.md) |
 

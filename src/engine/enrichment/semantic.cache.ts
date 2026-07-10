@@ -1,4 +1,3 @@
-import Database from "better-sqlite3";
 import { CACHE_CONFIG } from "../../config/cache";
 import path from "path";
 import fs from "fs";
@@ -9,8 +8,74 @@ export interface SemanticCacheData {
   developer: any;
 }
 
+type Stmt = {
+  get: (...args: any[]) => any;
+  run: (...args: any[]) => any;
+};
+
+type DbLike = {
+  exec: (sql: string) => void;
+  prepare: (sql: string) => Stmt;
+};
+
+class MemoryDb implements DbLike {
+  private rows = new Map<string, any>();
+
+  exec(_sql: string) {}
+
+  prepare(sql: string): Stmt {
+    const s = sql.replace(/\s+/g, " ").trim().toLowerCase();
+    if (s.startsWith("select") && s.includes("from semantic_annotations")) {
+      return {
+        get: (contractAddress: string) => this.rows.get(String(contractAddress).toLowerCase()),
+        run: () => {},
+      };
+    }
+    if (s.startsWith("insert") && s.includes("into semantic_annotations")) {
+      return {
+        get: () => undefined,
+        run: (
+          contractAddress: string,
+          prompt_version: string,
+          data: string,
+          created_at: number
+        ) => {
+          this.rows.set(String(contractAddress).toLowerCase(), {
+            data,
+            prompt_version,
+            created_at,
+          });
+        },
+      };
+    }
+    if (s.startsWith("delete")) {
+      return {
+        get: () => undefined,
+        run: (contractAddress: string) => {
+          this.rows.delete(String(contractAddress).toLowerCase());
+        },
+      };
+    }
+    return { get: () => undefined, run: () => {} };
+  }
+}
+
+function openDatabase(dbPath: string): DbLike {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const Database = require("better-sqlite3");
+    return new Database(dbPath) as DbLike;
+  } catch (err: any) {
+    console.error(
+      "[SemanticCache] better-sqlite3 unavailable — using in-memory cache.",
+      err?.message || err
+    );
+    return new MemoryDb();
+  }
+}
+
 export class SemanticCache {
-  private db: Database.Database;
+  private db: DbLike;
 
   constructor(dbDir: string = CACHE_CONFIG.DB_DIR, dbName: string = "semantic_hashgraph.db") {
     let resolvedDbDir = dbDir;
@@ -23,7 +88,7 @@ export class SemanticCache {
     }
 
     const dbPath = path.join(fullDir, dbName);
-    this.db = new Database(dbPath);
+    this.db = openDatabase(dbPath);
     this.initDatabase();
   }
 
@@ -44,14 +109,14 @@ export class SemanticCache {
       FROM semantic_annotations
       WHERE contract_address = ?
     `);
-    
-    const row = stmt.get(contractAddress) as { data: string; prompt_version: string; } | undefined;
+
+    const row = stmt.get(contractAddress) as { data: string; prompt_version: string } | undefined;
 
     if (!row) return null;
-    
+
     if (row.prompt_version !== requiredPromptVersion) {
-       this.delete(contractAddress);
-       return null;
+      this.delete(contractAddress);
+      return null;
     }
 
     try {
@@ -76,12 +141,7 @@ export class SemanticCache {
         created_at = excluded.created_at
     `);
 
-    stmt.run(
-      contractAddress,
-      promptVersion,
-      JSON.stringify(data),
-      Date.now()
-    );
+    stmt.run(contractAddress, promptVersion, JSON.stringify(data), Date.now());
   }
 
   public delete(contractAddress: string): void {
