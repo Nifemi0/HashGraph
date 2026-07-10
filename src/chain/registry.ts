@@ -28,18 +28,22 @@ const REGISTRY_ABI = [
   },
 ] as const;
 
-// HashGraphRegistry was deployed on HashKey Testnet (see deployments/hashkeyTestnet.json).
-// Attestation lookup/register stay on testnet unless REGISTRY_RPC_URL overrides.
+// HashGraphRegistry on HashKey Mainnet (see deployments/mainnet.json).
+// Override with REGISTRY_CHAIN_ID / REGISTRY_RPC_URL for testnet or custom RPCs.
+const DEFAULT_REGISTRY_ADDRESS =
+  "0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6" as const;
+
 const HASHKEY_CHAIN = {
-  id: Number(process.env.REGISTRY_CHAIN_ID ?? 133),
-  name: process.env.REGISTRY_CHAIN_NAME ?? "HashKey Testnet",
+  id: Number(process.env.REGISTRY_CHAIN_ID ?? 177),
+  name: process.env.REGISTRY_CHAIN_NAME ?? "HashKey Mainnet",
   nativeCurrency: { name: "HSK", symbol: "HSK", decimals: 18 },
   rpcUrls: {
     default: {
       http: [
         process.env.REGISTRY_RPC_URL ??
-          process.env.HASHKEY_TESTNET_RPC_URL ??
-          "https://testnet.hsk.xyz",
+          process.env.HASHKEY_RPC_URL ??
+          process.env.RPC_URL ??
+          "https://mainnet.hsk.xyz",
       ],
     },
   },
@@ -61,13 +65,10 @@ function getPublicClient() {
 }
 
 function getRegistryAddress(): Address {
-  const addr = process.env.REGISTRY_ADDRESS || process.env.NEXT_PUBLIC_REGISTRY_ADDRESS;
-  if (!addr) {
-    // Return a dummy address for local dev if not set, 
-    // but log a warning
-    console.warn("WARN: REGISTRY_ADDRESS not set in .env");
-    return '0x0000000000000000000000000000000000000000';
-  }
+  const addr =
+    process.env.REGISTRY_ADDRESS ||
+    process.env.NEXT_PUBLIC_REGISTRY_ADDRESS ||
+    DEFAULT_REGISTRY_ADDRESS;
   return addr as Address;
 }
 

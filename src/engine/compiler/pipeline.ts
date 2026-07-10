@@ -102,13 +102,24 @@ export class CompilerPipeline {
         const graphHash = "0x" + crypto.createHash("sha256").update(hashInput).digest("hex");
         
         const attestation = await lookupGraph(input.address);
-        
+        const ZERO =
+          "0x0000000000000000000000000000000000000000000000000000000000000000";
+        const hasAttestation = !!(
+          attestation &&
+          attestation.verified &&
+          attestation.graphHash &&
+          attestation.graphHash !== ZERO
+        );
+
         graph.registry = {
-            registered: !!attestation,
-            verified: attestation ? attestation.graphHash === graphHash : false,
+            registered: hasAttestation,
+            verified: hasAttestation && attestation!.graphHash === graphHash,
             graphHash: graphHash,
-            metadataURI: attestation ? attestation.metadataURI : "",
-            registryAddress: process.env.REGISTRY_ADDRESS || "0x0000000000000000000000000000000000000000",
+            metadataURI: hasAttestation ? attestation!.metadataURI : "",
+            registryAddress:
+              process.env.REGISTRY_ADDRESS ||
+              process.env.NEXT_PUBLIC_REGISTRY_ADDRESS ||
+              "0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6",
             deploymentNetwork: "HashKey Mainnet"
         };
         diagnostics.stage_times['RegistryLookup'] = performance.now() - registryStart;

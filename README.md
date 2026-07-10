@@ -2,20 +2,25 @@
 
 **Deterministic by design. Explainable by AI.**
 
+> **On-Chain Horizon Hackathon 2026 · AI track**  
+> On-chain financial infrastructure for AI agents on HashKey Chain.
+
 Compiles HashKey Chain smart contracts into structured **Protocol Graphs** that Cursor, Claude, and other AI agents can query instantly through MCP.
 
 [![npm](https://img.shields.io/npm/v/hashgraph-mcp.svg)](https://www.npmjs.com/package/hashgraph-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![MCP](https://img.shields.io/badge/MCP-ready-0ea5e9)](https://modelcontextprotocol.io)
 [![HashKey](https://img.shields.io/badge/HashKey-Mainnet-10B981)](https://hsk.blockscout.com)
+[![Track](https://img.shields.io/badge/Track-AI-8b5cf6)](./SUBMISSION.md)
 
 | | |
 |---|---|
 | **Live site** | https://hashgraph-eight.vercel.app |
 | **Explorer** | https://hashgraph-eight.vercel.app/explorer.html |
 | **Docs** | https://hashgraph-eight.vercel.app/docs.html |
-| **npm** | `hashgraph-mcp@1.0.4` · https://www.npmjs.com/package/hashgraph-mcp |
+| **npm** | `hashgraph-mcp@1.0.5` · https://www.npmjs.com/package/hashgraph-mcp |
 | **GitHub** | https://github.com/Nifemi0/HashGraph |
+| **Submission pack** | [SUBMISSION.md](./SUBMISSION.md) |
 
 ---
 
@@ -125,8 +130,8 @@ Search the protocol for "transfer" and "mint".
 | 5 | `simulate_transaction` | `to`, `data`, `from?`, `value?` | Dry-run against HashKey Mainnet state |
 | 6 | `read_contract` | `address`, `data` | Call view/pure functions |
 | 7 | `get_source_code` | `address` | Resolved verified Solidity source |
-| 8 | `lookup_graph_attestation` | `address` | On-chain graph attestation lookup (testnet registry) |
-| 9 | `register_protocol_graph` | `address`, `graphHash`, `metadataURI` | Register graph hash (**writes gated** by default) |
+| 8 | `lookup_graph_attestation` | `address` | On-chain graph attestation lookup (HashKey Mainnet registry) |
+| 9 | `register_protocol_graph` | `address`, `graphHash`, `metadataURI` | Register graph hash on mainnet (**writes gated** by default) |
 
 Write path (`register_protocol_graph`) requires `HASHGRAPH_ENABLE_WRITES=true` plus a funded key. Safe default: read-only.
 
@@ -164,7 +169,23 @@ graph TD
 | Cache | SQLite |
 | Interface | MCP (`@modelcontextprotocol/sdk`) · npm SDK |
 | Optional AI | OpenAI / Anthropic / DeepSeek (annotates only) |
-| Registry | On-chain attestations (HashKey Testnet) |
+| Registry | `HashGraphRegistry` on HashKey Mainnet (`0x3776…16DA6`) |
+
+---
+
+## On-chain registry (HashKey Mainnet)
+
+| Field | Value |
+|-------|--------|
+| **Contract** | `HashGraphRegistry` (source **verified** on Blockscout) |
+| **Network** | HashKey Chain Mainnet (EVM chain id **177**) |
+| **Address** | [`0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6`](https://explorer.hsk.xyz/address/0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6) |
+| **Deploy tx** | [`0x27c0351a20720287365114eff963a16f9b9a1b25d0882fed066996c268613709`](https://explorer.hsk.xyz/tx/0x27c0351a20720287365114eff963a16f9b9a1b25d0882fed066996c268613709) |
+| **Block** | `24688343` |
+| **Demo attestation** | CELA graph · tx [`0x65e5ae50…`](https://explorer.hsk.xyz/tx/0x65e5ae501e4d77b858bbb7521934d907d0162347f70a79ce8de94142bb039177) |
+| **Config** | [`deployments/mainnet.json`](./deployments/mainnet.json) |
+
+MCP tools `lookup_graph_attestation` / `register_protocol_graph` talk to this contract. Registration stays **gated** (`HASHGRAPH_ENABLE_WRITES=true`) so the default install is read-only.
 
 ---
 
@@ -230,7 +251,7 @@ Optional env (see `.env` locally — never commit secrets):
 |----------|---------|
 | `HASHKEY_RPC_URL` | Mainnet RPC (default `https://mainnet.hsk.xyz`) |
 | `LLM_PROVIDER` / `*_API_KEY` | Semantic enrichment (optional) |
-| `REGISTRY_ADDRESS` | Attestation registry (testnet) |
+| `REGISTRY_ADDRESS` | Attestation registry (default mainnet `0x3776…16DA6`) |
 | `HASHGRAPH_ENABLE_WRITES` | Unlock `register_protocol_graph` |
 
 ---

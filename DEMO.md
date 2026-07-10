@@ -1,7 +1,9 @@
 # HashGraph Demo Kit
 
 **Length:** ~2:30–3:00  
+**Hackathon track:** AI (On-Chain Horizon 2026)  
 **Hero contract:** CELA `0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029`  
+**Mainnet registry:** `0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6`  
 **Site:** https://hashgraph-eight.vercel.app  
 **MCP:** `npx -y hashgraph-mcp`  
 **Tagline:** *Deterministic by design. Explainable by AI.*
@@ -245,4 +247,4 @@ npm run dashboard
 
 - npm: `hashgraph-mcp@1.0.3`
 - Local path: `/root/hashgraph`
-- Registry (testnet attestations only): `0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6`
+- Registry (HashKey Mainnet): `0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6` · [explorer](https://explorer.hsk.xyz/address/0x3776Cc9AEe3AFb005F9465e6B78079FCf4d16DA6)
