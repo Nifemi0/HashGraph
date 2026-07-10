@@ -2,46 +2,135 @@
 
 **Deterministic by design. Explainable by AI.**
 
-HashGraph compiles deterministic blockchain artifacts into an AI-readable Protocol Graph that IDEs, wallets, AI agents, and developer tools can consume through MCP.
+Compiles HashKey Chain smart contracts into structured **Protocol Graphs** that Cursor, Claude, and other AI agents can query instantly through MCP.
 
-## Why HashGraph?
+[![npm](https://img.shields.io/npm/v/hashgraph-mcp.svg)](https://www.npmjs.com/package/hashgraph-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![MCP](https://img.shields.io/badge/MCP-ready-0ea5e9)](https://modelcontextprotocol.io)
+[![HashKey](https://img.shields.io/badge/HashKey-Mainnet-10B981)](https://hsk.blockscout.com)
 
-**Current Workflow**
-`Explorer` → `ABI` → `Read Solidity` → `Guess Architecture` → `Integrate`
-
-**HashGraph Workflow**
-`Explorer` → `Compile` → `Protocol Graph` → `Ask AI` → `Ship`
-
-## The Problem
-LLMs understand code, but they don't understand protocols. A protocol is an emergent property of multiple smart contracts, roles, permissions, and events. AI agents (like Cursor or Claude) struggle to build a holistic mental model from raw ABIs. HashGraph solves this by deterministically compiling contracts into a structured Protocol Graph, and then using a Semantic Layer to explain it.
+| | |
+|---|---|
+| **Live site** | https://hashgraph-eight.vercel.app |
+| **Explorer** | https://hashgraph-eight.vercel.app/explorer.html |
+| **Docs** | https://hashgraph-eight.vercel.app/docs.html |
+| **npm** | `hashgraph-mcp@1.0.4` · https://www.npmjs.com/package/hashgraph-mcp |
+| **GitHub** | https://github.com/Nifemi0/HashGraph |
 
 ---
 
-## Installation
+## The problem → the product
 
-### Use as an MCP Server (recommended)
+**Today**
+
+`Explorer` → `ABI` → `Read Solidity` → `Guess architecture` → `Integrate`
+
+**With HashGraph**
+
+`Explorer` → `Compile` → `Protocol Graph` → `Ask AI` → `Ship`
+
+LLMs can read code. They still don’t understand *protocols* — roles, privileged functions, events, and dependencies across a contract surface. HashGraph **deterministically compiles** verified on-chain artifacts into a reusable graph, then optionally annotates it with AI. Structural facts never come from the model.
+
+> **ADR-015 — AI never creates facts.** Every role, event, and privileged function is extracted from verified ABI/source. The semantic layer only explains what the compiler already proved.
+
+---
+
+## Try it in 30 seconds
 
 ```bash
-# Install the HashGraph MCP server globally
-npm install -g hashgraph-mcp
-
-# Or run directly without installing
 npx -y hashgraph-mcp
 ```
 
-### Local Development
+### Wire into Claude Desktop
 
-```bash
-# Clone the repository
-git clone https://github.com/Nifemi0/HashGraph.git
-cd HashGraph
+Add to `claude_desktop_config.json`:
 
-# Install dependencies
-npm install
-
-# Build the project
-npm run build
+```json
+{
+  "mcpServers": {
+    "hashgraph": {
+      "command": "npx",
+      "args": ["-y", "hashgraph-mcp"]
+    }
+  }
+}
 ```
+
+### Wire into Cursor
+
+**Settings → Features → MCP → Add new MCP server**
+
+- Name: `HashGraph`
+- Type: `command`
+- Command: `npx -y hashgraph-mcp`
+
+Restart the client, then paste a demo prompt below.
+
+No clone required for the MCP path.
+
+---
+
+## Live demo (HashKey Mainnet)
+
+Verified contracts you can compile right now:
+
+| Chip | Address | Why it’s a good demo |
+|------|---------|----------------------|
+| **CELA** (hero) | `0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029` | Mint/burn privileged · transfer public |
+| **WHSK** | `0xB210D2120d57b758EE163cFfb43e73728c471Cf1` | Wrapped HSK |
+| **DOGS** | `0xF9fB2302DA48d5715b10921CEC3b82c99ACb39AC` | Simple ERC-20 |
+
+Or open the [web explorer](https://hashgraph-eight.vercel.app/explorer.html) and click a chip.
+
+### Copy-paste prompts
+
+**1. Protocol graph**
+
+```text
+Using HashGraph MCP, get the protocol graph for
+0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029.
+Highlight roles, events, privileged functions, dependencies, and integrity.
+```
+
+**2. Lightweight summary**
+
+```text
+Give me a contract summary for that address — intent, roles, privileged functions only.
+```
+
+**3. Transaction safety (calldata → meaning)**
+
+```text
+Explain this calldata against the same contract:
+0xa9059cbb0000000000000000000000001111111111111111111111111111111111111111000000000000000000000000000000000000000000000000000000000000000a
+What function is it, what are the args, and is it privileged or public?
+```
+
+**4. Search**
+
+```text
+Search the protocol for "transfer" and "mint".
+```
+
+---
+
+## MCP tools (9)
+
+| # | Tool | Parameters | Description |
+|---|------|------------|-------------|
+| 1 | `get_protocol_graph` | `address` | Full structural + semantic protocol graph |
+| 2 | `get_contract_summary` | `address` | Lightweight overview for agents/wallets |
+| 3 | `explain_transaction` | `address`, `calldata` | Decode calldata + privilege classification |
+| 4 | `search_protocol` | `address`, `query` | Search roles / events / privileged functions |
+| 5 | `simulate_transaction` | `to`, `data`, `from?`, `value?` | Dry-run against HashKey Mainnet state |
+| 6 | `read_contract` | `address`, `data` | Call view/pure functions |
+| 7 | `get_source_code` | `address` | Resolved verified Solidity source |
+| 8 | `lookup_graph_attestation` | `address` | On-chain graph attestation lookup (testnet registry) |
+| 9 | `register_protocol_graph` | `address`, `graphHash`, `metadataURI` | Register graph hash (**writes gated** by default) |
+
+Write path (`register_protocol_graph`) requires `HASHGRAPH_ENABLE_WRITES=true` plus a funded key. Safe default: read-only.
+
+---
 
 ## Architecture
 
@@ -54,138 +143,106 @@ graph TD
     E --> F(Semantic Enrichment)
     F --> G[(SQLite Cache)]
     G --> H[MCP Server]
-    H -->|Query| I(Cursor / Gemini / Claude)
-    
-    style E fill:#4f46e5,stroke:#333,stroke-width:2px,color:#fff
+    H -->|Query| I(Cursor / Claude / Gemini)
+
+    style E fill:#10B981,stroke:#333,stroke-width:2px,color:#fff
 ```
 
-## Compiler Pipeline
+### Compiler pipeline
 
-1. **RoleExtractor**: Extracts AccessControl, Ownable, and custom auth roles.
-2. **EventExtractor**: Extracts state-emission events.
-3. **FunctionExtractor**: Extracts public mutators and privileged functions.
-4. **DependencyExtractor**: Resolves external interfaces and downstream contracts.
+1. **RoleExtractor** — AccessControl, Ownable, custom auth roles  
+2. **EventExtractor** — state-emission events  
+3. **FunctionExtractor** — public mutators + privileged functions  
+4. **DependencyExtractor** — external interfaces / downstream contracts  
 
-## Semantic Pipeline (AI Enrichment)
+### Stack
 
-Adhering to **ADR-015 (AI Never Creates Facts)**, the AI engine consumes the deterministic structural facts and extracts:
-- Technical Intent
-- User Goals
-- Security Guardrails
-- Developer Integration Notes
-*All AI outputs undergo strict Citation Validation against the deterministic graph.*
-
-## MCP Server Usage
-
-HashGraph is primarily consumed as a Model Context Protocol (MCP) server. No repository clone is required to use it.
-
-### Quick Start: Use HashGraph in Cursor / Claude Desktop
-
-Add this configuration to your AI client to enable HashGraph globally:
-
-#### For Claude Desktop
-Add this to your `claude_desktop_config.json` (located at `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS or `%APPDATA%/Claude/claude_desktop_config.json` on Windows):
-```json
-{
-  "mcpServers": {
-    "hashgraph": {
-      "command": "npx",
-      "args": ["-y", "hashgraph-mcp"]
-    }
-  }
-}
-```
-
-#### For Cursor
-1. Open Cursor Settings.
-2. Navigate to **Features > MCP**.
-3. Click **+ Add new MCP server**.
-4. Set Name: `HashGraph`
-5. Set Type: `command`
-6. Set Command: `npx -y hashgraph-mcp`
+| Layer | Tech |
+|-------|------|
+| Chain | HashKey Mainnet (177) · Blockscout |
+| Runtime | Node.js · TypeScript · viem |
+| Cache | SQLite |
+| Interface | MCP (`@modelcontextprotocol/sdk`) · npm SDK |
+| Optional AI | OpenAI / Anthropic / DeepSeek (annotates only) |
+| Registry | On-chain attestations (HashKey Testnet) |
 
 ---
 
-## What to Ask Claude/Cursor After Adding MCP
+## FAQ (for judges)
 
-Once integrated, restart your AI client, open a chat, and ask questions like:
-* *"Analyze HashKey Chain contract 0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029."*
-* *"Return the protocol graph, privileged functions, events, dependencies, and integration notes for CELA."*
-* *"Explain what this transaction calldata does using the HashGraph MCP server: 0xa9059cbb..."*
+**Why not just ask Claude?**  
+Claude reads files. HashGraph compiles *protocols* into a deterministic graph with provenance and a reusable schema any MCP client can query.
 
----
+**Why is this deterministic?**  
+Structural facts come only from verified blockchain artifacts (ABI, source, events, roles, dependencies). AI annotates; it cannot invent.
 
-## Available MCP Tools
+**Why MCP?**  
+Agents already speak MCP. One server → Cursor, Claude Desktop, and any compatible client — no custom plugin per IDE.
 
-HashGraph exposes the following 9 tools directly to your AI client:
+**Why HashKey?**  
+Better tooling lowers integration friction. HashGraph makes HashKey protocols legible to both humans and AI coding agents, which speeds ecosystem adoption.
 
-| # | Tool | Parameters | Description |
-|---|------|-----------|-------------|
-| 1 | `get_protocol_graph` | `address` | Compiles a smart contract into a structured JSON graph containing roles, dependencies, events, and intent. |
-| 2 | `get_contract_summary` | `address` | Returns a lightweight structural and metadata overview. |
-| 3 | `explain_transaction` | `address`, `calldata` | Decodes raw transaction calldata and evaluates safety. |
-| 4 | `search_protocol` | `address`, `query` | Searches the cached protocol graphs for privileges, interfaces, or variables. |
-| 5 | `simulate_transaction` | `to`, `data`, `from?`, `value?` | Simulates a transaction to see its outcome without writing state. |
-| 6 | `read_contract` | `address`, `data` | Reads state variables or view functions directly. |
-| 7 | `get_source_code` | `address` | Fetches fully resolved, unflattened Solidity source code. |
-| 8 | `lookup_graph_attestation` | `address` | Checks the on-chain HashKey Mainnet attestation registry. |
-| 9 | `register_protocol_graph` | `address`, `graphHash`, `metadataURI` | Registers a protocol graph hash (gated by default). |
+**Is it read-only?**  
+Yes by default. Simulation and reads hit mainnet state without writing. Registry registration is explicitly gated.
 
 ---
 
-## Local Development & Compilation
-
-If you want to run or build the project from source:
+## Programmatic SDK
 
 ```bash
-# Start the MCP server locally in stdio transport mode
-npm run mcp
+npm install hashgraph-mcp
+```
 
-# Run the local test suite
-npm test
+```ts
+import { HashGraphClient } from "hashgraph-mcp";
 
-# Build the MCP server bundle
+const client = new HashGraphClient();
+const graph = await client.getProtocolGraph(
+  "0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029"
+);
+
+console.log(graph.structural.events);
+console.log(graph.security.privileged_functions);
+```
+
+See [SDK.md](./SDK.md) for the full API.
+
+---
+
+## Local development
+
+```bash
+git clone https://github.com/Nifemi0/HashGraph.git
+cd HashGraph
+npm install
 npm run build
+
+npm run mcp          # MCP server (stdio)
+npm run dashboard    # local dashboard
+npm test             # test suite
+npm run seed         # warm demo cache (HashKey contracts)
+npm run demo:smoke   # smoke all MCP tool surfaces
 ```
 
-## Dashboard & Visualization
-Launch the HashGraph web dashboard to visually compile contracts in real-time.
-```bash
-npm run dashboard
-```
+Optional env (see `.env` locally — never commit secrets):
+
+| Variable | Purpose |
+|----------|---------|
+| `HASHKEY_RPC_URL` | Mainnet RPC (default `https://mainnet.hsk.xyz`) |
+| `LLM_PROVIDER` / `*_API_KEY` | Semantic enrichment (optional) |
+| `REGISTRY_ADDRESS` | Attestation registry (testnet) |
+| `HASHGRAPH_ENABLE_WRITES` | Unlock `register_protocol_graph` |
 
 ---
 
-## FAQ (For Judges)
+## CI / CD & versioning
 
-**"Why not just ask Claude?"**
-> Claude can read individual contracts. HashGraph compiles entire protocols into a deterministic graph with provenance, explainability, and a reusable schema exposed through MCP.
-
-**"Why is this deterministic?"**
-> Every structural fact comes from verified blockchain artifacts—ABI, verified source, events, roles, and dependencies. The AI layer only annotates those facts and cannot create new ones.
-
-**"Why MCP?"**
-> Because AI tools already speak MCP. Once HashGraph exposes a protocol through MCP, Cursor, Claude Desktop, and other compatible tools can query it without custom integrations.
-
-**"Why HashKey?"**
-> Better developer tooling reduces integration friction. HashGraph makes HashKey protocols easier for both developers and AI coding agents to understand, which can accelerate ecosystem adoption.
+- **Push / PR:** type-check → test → audit → build  
+- **Release tag:** publish to npm  
+- **Current:** `v1.0.4` — [docs/VERSION_HISTORY.md](./docs/VERSION_HISTORY.md)
 
 ---
-
-## Version History
-
-Version history is auto-generated from git tags. Run `node scripts/version.js` to update.
-
-See [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md) for the full changelog.
-
-## CI / CD
-
-This project uses GitHub Actions for continuous integration:
-
-- **On every push / PR:** Type-check → Test → Security Audit → Build
-- **On release tag:** All the above + publish to npm
-
-See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for details.
 
 ## License
-MIT License
+
+MIT · Built for **HashKey Chain**
