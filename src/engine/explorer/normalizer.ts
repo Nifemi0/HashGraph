@@ -9,11 +9,12 @@ export interface NormalizedContractData {
   sourceCode: string | null;
 }
 
+// Proxy slot reads must hit the same chain as Blockscout (HashKey Mainnet).
 const HASHKEY_CHAIN = {
-  id: 133,
-  name: "HashKey Testnet",
+  id: 177,
+  name: "HashKey Mainnet",
   nativeCurrency: { name: "HSK", symbol: "HSK", decimals: 18 },
-  rpcUrls: { default: { http: [process.env.HASHKEY_TESTNET_RPC_URL ?? "https://testnet.hsk.xyz"] } },
+  rpcUrls: { default: { http: [process.env.HASHKEY_RPC_URL ?? process.env.RPC_URL ?? "https://mainnet.hsk.xyz"] } },
 } as const;
 
 export class DataNormalizer {

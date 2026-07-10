@@ -19,6 +19,14 @@
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/tokens.css">
+    <script>
+        // Dark Mode: apply saved preference instantly (prevents flash)
+        if (localStorage.getItem('hashgraph-theme') === 'dark' ||
+            (!localStorage.getItem('hashgraph-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,12 +35,19 @@
     
     if(navContainer) {
         window.addEventListener('scroll', () => {
-            if (window.innerWidth < 768) return; // Keep solid pill on mobile always
+            if (window.innerWidth < 768) return;
+            const isDark = document.documentElement.classList.contains('dark');
             if (window.scrollY > 20) {
-                navContainer.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
                 navContainer.classList.remove('md:bg-transparent', 'md:border-transparent', 'md:shadow-none');
+                if (isDark) {
+                    navContainer.classList.add('bg-gray-950/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-800');
+                    navContainer.classList.remove('bg-white/95', 'border-gray-200');
+                } else {
+                    navContainer.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                    navContainer.classList.remove('bg-gray-950/95', 'border-gray-800');
+                }
             } else {
-                navContainer.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                navContainer.classList.remove('bg-white/95', 'bg-gray-950/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200', 'border-gray-800');
                 navContainer.classList.add('md:bg-transparent', 'md:border-transparent', 'md:shadow-none');
             }
         });
@@ -41,6 +56,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -63,6 +79,7 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FAFAFA; color: #171717; }
+        html.dark body { background-color: #0A0A0A; color: #F4F4F5; }
         h1, h2, h3, h4, .font-serif { font-family: 'Newsreader', serif; }
         
         /* Node Graph Animation */
@@ -92,20 +109,24 @@
 <body class="antialiased">
 
 <nav class="fixed top-0 w-full z-50 transition-all duration-300 pt-4 px-4 sm:px-6">
-    <div id="navContainer" class="max-w-5xl mx-auto h-14 flex items-center justify-between gap-4 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm border border-gray-200 rounded-full px-6 md:bg-transparent md:border-transparent md:shadow-none md:px-8">
+    <div id="navContainer" class="max-w-5xl mx-auto h-14 flex items-center justify-between gap-4 transition-all duration-300 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md shadow-sm border border-gray-200 dark:border-gray-800 rounded-full px-6 md:bg-transparent md:border-transparent md:shadow-none md:px-8">
         <a href="index.html" class="flex items-center gap-2 transition-all duration-300 hover:opacity-80">
-            <span class="material-symbols-outlined text-gray-900" style="font-variation-settings: 'FILL' 1;">hexagon</span>
-            <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-gray-900">HashGraph</span>
+            <span class="material-symbols-outlined text-gray-900 dark:text-gray-100" style="font-variation-settings: 'FILL' 1;">hexagon</span>
+            <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-gray-900 dark:text-gray-100">HashGraph</span>
         </a>
         
-        <div class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium text-gray-500 transition-all duration-300">
-            <a href="docs.html" class="hover:text-gray-900 transition-colors">Docs</a>
-            <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 transition-colors">GitHub</a>
+        <div class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 transition-all duration-300">
+            <a href="docs.html" class="hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Docs</a>
+            <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 dark:hover:text-gray-100 transition-colors">GitHub</a>
         </div>
         
         <div class="flex items-center gap-2 sm:gap-4 transition-all duration-300">
-            <span class="hidden xl:inline-block text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1.5 rounded-full">HashKey</span>
-            <a href="explorer.html" class="bg-black text-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-full hover:bg-gray-800 transition-colors flex items-center gap-1.5 sm:gap-2">
+            <button id="darkModeToggle" aria-label="Toggle dark mode" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400">
+                <span class="material-symbols-outlined text-[18px] dark:hidden">dark_mode</span>
+                <span class="material-symbols-outlined text-[18px] hidden dark:inline">light_mode</span>
+            </button>
+            <span class="hidden xl:inline-block text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">HashKey</span>
+            <a href="explorer.html" class="bg-black text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-full transition-colors flex items-center gap-1.5 sm:gap-2">
                 Launch <span class="material-symbols-outlined text-[14px] sm:text-[16px]" aria-hidden="true">arrow_forward</span>
             </a>
         </div>
@@ -117,34 +138,34 @@
 <main class="pt-32 pb-24 max-w-7xl mx-auto px-6 min-h-[80vh] flex gap-12 relative">
     
     <!-- Sidebar Navigation -->
-    <div class="hidden md:block w-64 shrink-0 border-r border-gray-100 pr-6 sticky top-24 self-start space-y-8 max-h-[80vh] overflow-y-auto pb-10">
+    <div class="hidden md:block w-64 shrink-0 border-r border-gray-100 dark:border-gray-800 pr-6 sticky top-24 self-start space-y-8 max-h-[80vh] overflow-y-auto pb-10">
         <div>
-            <div class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">Getting Started</div>
+            <div class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-3">Getting Started</div>
             <div class="space-y-2">
-                <a href="#intro" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">Introduction</a>
-                <a href="#quickstart" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">Quick Start</a>
+                <a href="#intro" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Introduction</a>
+                <a href="#quickstart" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Quick Start</a>
             </div>
         </div>
         <div>
-            <div class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">Architecture</div>
+            <div class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-3">Architecture</div>
             <div class="space-y-2">
-                <a href="#pipeline" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">Pipeline</a>
-                <a href="#compiler" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">Deterministic Compiler</a>
-                <a href="#semantic" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">Semantic Engine</a>
+                <a href="#pipeline" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Pipeline</a>
+                <a href="#compiler" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Deterministic Compiler</a>
+                <a href="#semantic" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Semantic Engine</a>
             </div>
         </div>
         <div>
-            <div class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">Components</div>
+            <div class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-3">Components</div>
             <div class="space-y-2">
-                <a href="#schema" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">Schema</a>
-                <a href="#sdk" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">SDK</a>
-                <a href="#mcp" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">MCP Server</a>
+                <a href="#schema" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Schema</a>
+                <a href="#sdk" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">SDK</a>
+                <a href="#mcp" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">MCP Server</a>
             </div>
         </div>
         <div>
-            <div class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">Examples</div>
+            <div class="text-xs font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-3">Examples</div>
             <div class="space-y-2">
-                <a href="#examples" class="block text-sm text-gray-500 hover:text-gray-900 transition-colors">Analyze & Search</a>
+                <a href="#examples" class="block text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Analyze & Search</a>
             </div>
         </div>
     </div>
@@ -155,38 +176,38 @@
         <!-- INTRO -->
         <section id="intro" class="scroll-mt-32">
             <div class="text-xs font-bold text-hashkey uppercase tracking-widest mb-3">Overview</div>
-            <h1 class="text-5xl font-serif text-gray-900 mb-6 tracking-tight">Documentation</h1>
-            <p class="text-xl text-gray-600 leading-relaxed mb-6">
+            <h1 class="text-5xl font-serif text-gray-900 dark:text-gray-100 mb-6 tracking-tight">Documentation</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                 HashGraph is the semantic infrastructure layer for HashKey Chain. It transforms raw, unreadable blockchain bytecode into highly structured, AI-readable Protocol Graphs.
             </p>
-            <p class="text-gray-600 leading-relaxed mb-6">
+            <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                 Most blockchain tools stop at the ABI. They tell computers <em>how</em> to call a contract, but not <em>what</em> the contract actually does. HashGraph bridges this gap by deterministically compiling a contract's relationships, roles, dependencies, and metadata into a singular Protocol Graph, and then mapping a semantic intent layer on top of it.
             </p>
-            <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 text-sm text-blue-900">
+            <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-xl p-5 text-sm text-blue-900 dark:text-blue-200">
                 <strong>Important:</strong> HashGraph is strictly read-only infrastructure. It does not execute transactions, hold private keys, or perform audits. It is a semantic data provider for downstream agents and developer tools.
             </div>
         </section>
 
         <!-- QUICKSTART -->
         <section id="quickstart" class="scroll-mt-32">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">Quick Start</h2>
-            <p class="text-gray-600 mb-6 leading-relaxed">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">Quick Start</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                 HashGraph is designed to be consumed directly by AI agents. You can run the MCP Server with zero configuration.
             </p>
             
-            <h3 class="font-bold text-gray-900 mb-3">1. Global Installation</h3>
-            <p class="text-sm text-gray-600 mb-3">Install the HashGraph MCP server globally on your machine:</p>
+            <h3 class="font-bold text-gray-900 dark:text-gray-100 mb-3">1. Global Installation</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Install the HashGraph MCP server globally on your machine:</p>
             <div class="relative bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm text-gray-300 group">
-                <button onclick="copyToClipboard(this, 'npm install -g hashgraph-mcp')" class="absolute right-3 top-3 text-xs bg-gray-800 text-gray-300 hover:text-white px-2 py-1 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1 shadow-md">
+                <button onclick="copyToClipboard(this, 'npm install -g hashgraph-mcp')" class="absolute right-3 top-3 text-xs bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-zinc-200 px-2 py-1 rounded flex items-center gap-1 shadow-md transition-all cursor-pointer font-medium">
                     <span class="material-symbols-outlined text-[12px]">content_copy</span> Copy
                 </button>
                 <span class="text-gray-500">$</span> npm install -g hashgraph-mcp
             </div>
 
-            <h3 class="font-bold text-gray-900 mb-3">2. Run via NPX (Direct execution)</h3>
-            <p class="text-sm text-gray-600 mb-3">Alternatively, run the server instantly without local installation:</p>
+            <h3 class="font-bold text-gray-900 dark:text-gray-100 mb-3">2. Run via NPX (Direct execution)</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Alternatively, run the server instantly without local installation:</p>
             <div class="relative bg-[#0A0A0A] p-4 rounded-xl shadow-lg border border-gray-800 mb-8 font-mono text-sm text-gray-300 group">
-                <button onclick="copyToClipboard(this, 'npx -y hashgraph-mcp')" class="absolute right-3 top-3 text-xs bg-gray-800 text-gray-300 hover:text-white px-2 py-1 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1 shadow-md">
+                <button onclick="copyToClipboard(this, 'npx -y hashgraph-mcp')" class="absolute right-3 top-3 text-xs bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-zinc-200 px-2 py-1 rounded flex items-center gap-1 shadow-md transition-all cursor-pointer font-medium">
                     <span class="material-symbols-outlined text-[12px]">content_copy</span> Copy
                 </button>
                 <span class="text-gray-500">$</span> <span class="text-green-400">npx</span> -y hashgraph-mcp
@@ -195,9 +216,9 @@
 
         <!-- PIPELINE -->
         <section id="pipeline" class="scroll-mt-32">
-            <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Architecture</div>
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">Compiler Pipeline</h2>
-            <p class="text-gray-600 mb-8 leading-relaxed">
+            <div class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Architecture</div>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">Compiler Pipeline</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                 HashGraph is built on a strict deterministic pipeline. The pipeline operates as a series of pure functions. Data flows strictly downwards.
             </p>
             
@@ -255,28 +276,28 @@
 
         <!-- COMPILER -->
         <section id="compiler" class="scroll-mt-32">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">The Deterministic Compiler</h2>
-            <p class="text-gray-600 mb-6 leading-relaxed">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">The Deterministic Compiler</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                 The core innovation of HashGraph is the absolute separation of <strong>Fact</strong> and <strong>Inference</strong>. 
                 The Deterministic Compiler handles the Facts.
             </p>
-            <ul class="space-y-4 text-sm text-gray-700 mb-8 list-disc pl-5">
-                <li><strong class="text-gray-900">ABI is Truth:</strong> The compiler prioritizes verified ABIs above all other data sources.</li>
-                <li><strong class="text-gray-900">Dependency Tracing:</strong> It scans constructors and immutable public variables to determine what other contracts this protocol relies on.</li>
-                <li><strong class="text-gray-900">Role Identification:</strong> It statically analyzes <code>onlyOwner</code>, <code>hasRole</code>, and standard modifiers to build an authorization map.</li>
+            <ul class="space-y-4 text-sm text-gray-700 dark:text-gray-300 mb-8 list-disc pl-5">
+                <li><strong class="text-gray-900 dark:text-gray-100">ABI is Truth:</strong> The compiler prioritizes verified ABIs above all other data sources.</li>
+                <li><strong class="text-gray-900 dark:text-gray-100">Dependency Tracing:</strong> It scans constructors and immutable public variables to determine what other contracts this protocol relies on.</li>
+                <li><strong class="text-gray-900 dark:text-gray-100">Role Identification:</strong> It statically analyzes <code>onlyOwner</code>, <code>hasRole</code>, and standard modifiers to build an authorization map.</li>
             </ul>
         </section>
 
         <!-- SEMANTIC ENGINE -->
         <section id="semantic" class="scroll-mt-32">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">The Semantic Engine</h2>
-            <p class="text-gray-600 mb-6 leading-relaxed">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">The Semantic Engine</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                 While structural data is perfect for computers, AI agents and humans need context. The Semantic Engine provides this layer while adhering to strict safety rules.
             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-red-50 border border-red-100 rounded-xl p-6">
-                    <div class="flex items-center gap-2 text-red-700 font-bold mb-3"><span class="material-symbols-outlined text-[20px]">cancel</span> What it Cannot Do</div>
+                <div class="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/40 rounded-xl p-6">
+                    <div class="flex items-center gap-2 text-red-700 dark:text-red-400 font-bold mb-3"><span class="material-symbols-outlined text-[20px]">cancel</span> What it Cannot Do</div>
                     <ul class="text-sm text-red-900/80 space-y-2">
                         <li>Cannot invent blockchain facts</li>
                         <li>Cannot guess a variable type</li>
@@ -284,9 +305,9 @@
                         <li>Cannot calculate confidence scores</li>
                     </ul>
                 </div>
-                <div class="bg-green-50 border border-green-100 rounded-xl p-6">
-                    <div class="flex items-center gap-2 text-green-700 font-bold mb-3"><span class="material-symbols-outlined text-[20px]">check_circle</span> What it Can Do</div>
-                    <ul class="text-sm text-green-900/80 space-y-2">
+                <div class="bg-green-50 dark:bg-green-950/20 border border-green-100 dark:border-green-900/40 rounded-xl p-6">
+                    <div class="flex items-center gap-2 text-green-700 dark:text-green-400 font-bold mb-3"><span class="material-symbols-outlined text-[20px]">check_circle</span> What it Can Do</div>
+                    <ul class="text-sm text-green-900/80 dark:text-green-300 space-y-2">
                         <li>Summarize the protocol's goal</li>
                         <li>Group related functions (e.g. "Liquidation")</li>
                         <li>Explain what a transaction calldata intends</li>
@@ -295,26 +316,26 @@
                 </div>
             </div>
             
-            <p class="text-sm text-gray-500 italic">
+            <p class="text-sm text-gray-500 dark:text-gray-400 italic">
                 * Note on Confidence: Confidence scores are computed deterministically. The LLM is forbidden from assigning its own confidence levels.
             </p>
         </section>
 
         <!-- SCHEMA -->
-        <section id="schema" class="scroll-mt-32 pt-12 border-t border-gray-200">
-            <div class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Components</div>
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">The Protocol Graph Schema</h2>
-            <p class="text-gray-600 mb-8 leading-relaxed">
+        <section id="schema" class="scroll-mt-32 pt-12 border-t border-gray-200 dark:border-gray-800">
+            <div class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Components</div>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">The Protocol Graph Schema</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                 The final output of the pipeline is a standardized JSON schema representing the <code>ProtocolGraph</code>. 
             </p>
 
             <div class="space-y-8">
                 <!-- Metadata -->
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
-                        <span class="material-symbols-outlined text-gray-400 text-lg">data_object</span> Metadata
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-lg">data_object</span> Metadata
                     </h3>
-                    <p class="text-sm text-gray-600 mb-4">Core identification strings, proxy configurations, and compilation states.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Core identification strings, proxy configurations, and compilation states.</p>
                     <div class="bg-[#0A0A0A] p-5 rounded-xl shadow-lg border border-gray-800 font-mono text-[13px] text-gray-300 overflow-x-auto">
 <pre>"metadata": {
   "protocol_name": "Lending Vault",
@@ -328,10 +349,10 @@
 
                 <!-- Structural -->
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
                         <span class="material-symbols-outlined text-blue-400 text-lg">account_tree</span> Structural (Deterministic)
                     </h3>
-                    <p class="text-sm text-gray-600 mb-4">The absolute truth extracted from the ABI. Guaranteed to match the on-chain bytecode.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">The absolute truth extracted from the ABI. Guaranteed to match the on-chain bytecode.</p>
                     <div class="bg-[#0A0A0A] p-5 rounded-xl shadow-lg border border-blue-900/30 font-mono text-[13px] text-gray-300 overflow-x-auto">
 <pre>"structural": {
   "roles": ["Owner", "Guardian", "Operator"],
@@ -346,10 +367,10 @@
 
                 <!-- Semantic -->
                 <div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
                         <span class="material-symbols-outlined text-purple-400 text-lg">psychology</span> Semantic & Security (AI Layer)
                     </h3>
-                    <p class="text-sm text-gray-600 mb-4">Inferred human-readable context layered safely on top of the structure.</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Inferred human-readable context layered safely on top of the structure.</p>
                     <div class="bg-[#0A0A0A] p-5 rounded-xl shadow-lg border border-purple-900/30 font-mono text-[13px] text-gray-300 overflow-x-auto">
 <pre>"semantic": {
   "intent": "Manages collateralized debt positions...",
@@ -365,14 +386,14 @@
         </section>
 
         <!-- SDK -->
-        <section id="sdk" class="scroll-mt-32 pt-12 border-t border-gray-200">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">SDK Integration (Developer Preview)</h2>
-            <p class="text-gray-600 mb-8 leading-relaxed">
+        <section id="sdk" class="scroll-mt-32 pt-12 border-t border-gray-200 dark:border-gray-800">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">SDK Integration (Developer Preview)</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                 The programmatic SDK is fully developed and exported directly from the published NPM package. You can install it and import the client class to build custom programmatic integrations:
             </p>
 
             <div class="relative bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto group">
-                <button onclick="copyToClipboard(this, document.getElementById('sdkCode').innerText)" class="absolute right-4 top-4 text-xs bg-gray-800 text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1.5 shadow-md">
+                <button onclick="copyToClipboard(this, document.getElementById('sdkCode').innerText)" class="absolute right-4 top-4 text-xs bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-zinc-200 px-2.5 py-1.5 rounded flex items-center gap-1.5 shadow-md transition-all cursor-pointer font-medium">
                     <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
                 </button>
 <pre id="sdkCode" class="font-mono text-sm text-gray-300">
@@ -396,16 +417,16 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
         </section>
 
         <!-- MCP -->
-        <section id="mcp" class="scroll-mt-32 pt-12 border-t border-gray-200">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">MCP Server (For AI Agents)</h2>
-            <p class="text-gray-600 mb-8 leading-relaxed">
+        <section id="mcp" class="scroll-mt-32 pt-12 border-t border-gray-200 dark:border-gray-800">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">MCP Server (For AI Agents)</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                 The Model Context Protocol (MCP) server allows AI agents like Claude Desktop or Cursor to directly interact with the deterministic HashGraph compiler without you having to write any code.
             </p>
 
-            <h3 class="text-lg font-bold text-gray-900 mb-3">Claude Desktop Setup</h3>
-            <p class="text-sm text-gray-500 mb-3">Add this to your <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>:</p>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">Claude Desktop Setup</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Add this to your <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>:</p>
             <div class="relative bg-[#0A0A0A] p-6 rounded-xl shadow-lg border border-gray-800 mb-8 overflow-x-auto group">
-                <button onclick="copyToClipboard(this, document.getElementById('claudeConfigCode').innerText)" class="absolute right-4 top-4 text-xs bg-gray-800 text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-gray-700 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100 flex items-center gap-1.5 shadow-md">
+                <button onclick="copyToClipboard(this, document.getElementById('claudeConfigCode').innerText)" class="absolute right-4 top-4 text-xs bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-zinc-200 px-2.5 py-1.5 rounded flex items-center gap-1.5 shadow-md transition-all cursor-pointer font-medium">
                     <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
                 </button>
 <pre id="claudeConfigCode" class="font-mono text-sm text-gray-300">
@@ -420,53 +441,93 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
 </pre>
             </div>
             
-            <p class="text-sm text-gray-500 mb-6">Restart Claude, and you can now ask Claude questions like: <em>"Analyze contract 0x... and tell me what dependencies it has."</em></p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Restart Claude, and you can now ask Claude questions like: <em>"Analyze contract 0x... and tell me what dependencies it has."</em></p>
 
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Available Tools (Exposed via MCP)</h3>
-            <div class="space-y-4">
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">get_protocol_graph()</div>
-                    <div class="text-sm text-gray-600 mt-1">Compiles a smart contract address into a structured JSON graph containing roles, dependencies, events, and intent.</div>
+            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Available Tools (Exposed via MCP)</h3>
+            
+            <div class="mb-8 p-6 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-2xl">
+                <h4 class="font-bold text-blue-900 dark:text-blue-200 mb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]">info</span> Concept Clarification: Tools vs. Functions
+                </h4>
+                <p class="text-sm text-blue-800 dark:text-blue-300 leading-relaxed">
+                    It is easy to confuse <strong>MCP Server Tools</strong> with <strong>Contract ABI Functions</strong>:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs font-mono">
+                    <div class="bg-white/50 dark:bg-black/30 p-4 rounded-xl border border-blue-200/50 dark:border-blue-900/30">
+                        <span class="font-bold text-blue-900 dark:text-blue-200">MCP Server Tools (9 Methods)</span>
+                        <p class="text-gray-600 dark:text-gray-400 mt-1 font-sans">The APIs exposed by the HashGraph MCP server to AI agents (e.g. <code>get_protocol_graph</code>, <code>explain_transaction</code>).</p>
+                    </div>
+                    <div class="bg-white/50 dark:bg-black/30 p-4 rounded-xl border border-blue-200/50 dark:border-blue-900/30">
+                        <span class="font-bold text-blue-900 dark:text-blue-200">Contract ABI Functions (e.g., 21 Functions)</span>
+                        <p class="text-gray-600 dark:text-gray-400 mt-1 font-sans">The smart contract functions written in Solidity and deployed on-chain (e.g. <code>transfer</code>, <code>setOwner</code>) that HashGraph compiles.</p>
+                    </div>
                 </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">get_contract_summary()</div>
-                    <div class="text-sm text-gray-600 mt-1">Returns a lightweight structural and metadata overview of a contract.</div>
-                </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">explain_transaction()</div>
-                    <div class="text-sm text-gray-600 mt-1">Decodes raw transaction calldata and evaluates its safety based on the compiled deterministic graph.</div>
-                </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">search_protocol()</div>
-                    <div class="text-sm text-gray-600 mt-1">Searches the cached protocol graphs for specific privileges, standard interfaces, or variables.</div>
-                </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">simulate_transaction()</div>
-                    <div class="text-sm text-gray-600 mt-1">Simulates a transaction against the blockchain to see its outcome without writing state.</div>
-                </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">read_contract()</div>
-                    <div class="text-sm text-gray-600 mt-1">Reads state variables or evaluates view functions directly from the contract.</div>
-                </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">get_source_code()</div>
-                    <div class="text-sm text-gray-600 mt-1">Fetches fully resolved, unflattened Solidity source code for verified contracts.</div>
-                </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">lookup_graph_attestation()</div>
-                    <div class="text-sm text-gray-600 mt-1">Checks the on-chain HashKey Mainnet attestation registry for a protocol graph hash.</div>
-                </div>
-                <div class="border border-gray-200 rounded-xl p-5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-start gap-4">
-                    <div class="bg-gray-100 rounded text-gray-900 font-mono font-bold px-3 py-1 text-sm border border-gray-200">register_protocol_graph()</div>
-                    <div class="text-sm text-gray-600 mt-1">Registers a deterministic protocol graph hash to the mainnet registry (gated by default).</div>
-                </div>
+            </div>
+
+            <div class="overflow-x-auto border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm bg-white dark:bg-gray-900 mb-8">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800 text-left text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-950 text-gray-500 dark:text-gray-400 font-mono text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="px-6 py-4 font-bold">Tool Name</th>
+                            <th class="px-6 py-4 font-bold">Parameters</th>
+                            <th class="px-6 py-4 font-bold">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-800 text-gray-700 dark:text-gray-300">
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">get_protocol_graph</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address</td>
+                            <td class="px-6 py-4">Compiles a smart contract address into a structured JSON graph containing roles, dependencies, events, and intent.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">get_contract_summary</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address</td>
+                            <td class="px-6 py-4">Returns a lightweight structural and metadata overview of a contract.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">explain_transaction</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address, calldata</td>
+                            <td class="px-6 py-4">Decodes raw transaction calldata and evaluates its safety based on the compiled deterministic graph.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">search_protocol</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address, query</td>
+                            <td class="px-6 py-4">Searches the cached protocol graphs for specific privileges, standard interfaces, or variables.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">simulate_transaction</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">to, data, from?, value?</td>
+                            <td class="px-6 py-4">Simulates a transaction against the blockchain to see its outcome without writing state.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">read_contract</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address, data</td>
+                            <td class="px-6 py-4">Reads state variables or evaluates view functions directly from the contract.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">get_source_code</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address</td>
+                            <td class="px-6 py-4">Fetches fully resolved, unflattened Solidity source code for verified contracts.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">lookup_graph_attestation</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address</td>
+                            <td class="px-6 py-4">Checks the on-chain HashKey Mainnet attestation registry for a protocol graph hash.</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-850/50 transition-colors">
+                            <td class="px-6 py-4 font-mono font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">register_protocol_graph</td>
+                            <td class="px-6 py-4 font-mono text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">address, graphHash, metadataURI</td>
+                            <td class="px-6 py-4">Registers a deterministic protocol graph hash to the mainnet registry (gated by default).</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
         <!-- EXAMPLES -->
-        <section id="examples" class="scroll-mt-32 pt-12 border-t border-gray-200">
-            <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6 tracking-tight">Interactive Examples</h2>
-            <p class="text-gray-600 mb-8 leading-relaxed">
+        <section id="examples" class="scroll-mt-32 pt-12 border-t border-gray-200 dark:border-gray-800">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-gray-100 mb-6 tracking-tight">Interactive Examples</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                 The best way to understand the Protocol Graph is to compile one yourself.
             </p>
             <div class="bg-black text-white p-8 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-6 border border-gray-800">
@@ -483,49 +544,45 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
     </div>
 </main>
 
-
-
-    <!-- Final Footer -->
-<footer class="py-12 bg-white border-t border-gray-100">
+<!-- Final Footer -->
+<footer class="py-12 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div class="flex flex-col gap-4">
-            <a href="index.html" class="flex items-center gap-2 text-gray-900 hover:text-black transition-colors">
+            <a href="index.html" class="flex items-center gap-2 text-gray-900 dark:text-gray-100 hover:text-black dark:hover:text-white transition-colors">
                 <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">hexagon</span>
                 <span class="font-serif font-bold text-lg">HashGraph</span>
             </a>
-            <div class="text-xs text-gray-400">
+            <div class="text-xs text-gray-400 dark:text-gray-500">
                 © 2024 HashGraph Protocol.<br>Deterministic by design.
             </div>
         </div>
         
         <div>
-            <h4 class="font-semibold text-gray-900 mb-4 text-sm">Product</h4>
-            <div class="flex flex-col gap-3 text-sm text-gray-500">
-                <a href="explorer.html" class="hover:text-gray-900">Explorer</a>
-                <a href="docs.html" class="hover:text-gray-900">Documentation</a>
+            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm">Product</h4>
+            <div class="flex flex-col gap-3 text-sm text-gray-500 dark:text-gray-400">
+                <a href="explorer.html" class="hover:text-gray-900 dark:hover:text-gray-200">Explorer</a>
+                <a href="docs.html" class="hover:text-gray-900 dark:hover:text-gray-200">Documentation</a>
             </div>
         </div>
         
         <div>
-            <h4 class="font-semibold text-gray-900 mb-4 text-sm">Developers</h4>
-            <div class="flex flex-col gap-3 text-sm text-gray-500">
-                <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900">GitHub</a>
-                <a href="docs.html#sdk" class="hover:text-gray-900">SDK</a>
-                <a href="docs.html#mcp" class="hover:text-gray-900">MCP Server</a>
+            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm">Developers</h4>
+            <div class="flex flex-col gap-3 text-sm text-gray-500 dark:text-gray-400">
+                <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 dark:hover:text-gray-200">GitHub</a>
+                <a href="docs.html#sdk" class="hover:text-gray-900 dark:hover:text-gray-200">SDK</a>
+                <a href="docs.html#mcp" class="hover:text-gray-900 dark:hover:text-gray-200">MCP Server</a>
             </div>
         </div>
         
         <div>
-            <h4 class="font-semibold text-gray-900 mb-4 text-sm">Resources</h4>
-            <div class="flex flex-col gap-3 text-sm text-gray-500">
-                <a href="docs.html#schema" class="hover:text-gray-900">Schema Protocol</a>
-                <a href="docs.html#pipeline" class="hover:text-gray-900">Architecture</a>
+            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm">Resources</h4>
+            <div class="flex flex-col gap-3 text-sm text-gray-500 dark:text-gray-400">
+                <a href="docs.html#schema" class="hover:text-gray-900 dark:hover:text-gray-200">Schema Protocol</a>
+                <a href="docs.html#pipeline" class="hover:text-gray-900 dark:hover:text-gray-200">Architecture</a>
             </div>
         </div>
     </div>
 </footer>
-
-
 
 <script>
     // Docs ScrollSpy
@@ -536,11 +593,11 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 navLinksList.forEach(link => {
-                    link.classList.remove('text-gray-900', 'font-bold');
-                    link.classList.add('text-gray-500', 'font-medium');
+                    link.classList.remove('text-gray-900', 'dark:text-gray-100', 'font-bold');
+                    link.classList.add('text-gray-500', 'dark:text-gray-400', 'font-medium');
                     if (link.getAttribute('href') === '#' + entry.target.id) {
-                        link.classList.remove('text-gray-500', 'font-medium');
-                        link.classList.add('text-gray-900', 'font-bold');
+                        link.classList.remove('text-gray-500', 'dark:text-gray-400', 'font-medium');
+                        link.classList.add('text-gray-900', 'dark:text-gray-100', 'font-bold');
                     }
                 });
             }
@@ -560,7 +617,16 @@ console.<span class="text-blue-300">log</span>(<span class="text-green-300">"AI 
             }, 2000);
         });
     }
-</script>
 
+    // Dark Mode Toggle
+    const darkToggle = document.getElementById('darkModeToggle');
+    if (darkToggle) {
+        darkToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('hashgraph-theme', isDark ? 'dark' : 'light');
+        });
+    }
+</script>
 </body>
-</html>
+</html>ml>

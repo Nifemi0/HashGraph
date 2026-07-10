@@ -13,9 +13,10 @@ export class DependencyExtractor implements GraphExtractor<DependencyResult> {
 
         if (input.abi) {
             for (const item of input.abi) {
-                if (item.inputs) {
+                if (item && item.inputs) {
                     for (const inputParam of item.inputs) {
                         if (inputParam.internalType && inputParam.internalType.startsWith("contract I")) {
+                            // ADR-014: detected_from = "constructor" or "function" ← inferred from parameters pointing to custom contracts starting with I (e.g. contract IPriceOracle)
                             const target = inputParam.internalType.replace("contract ", "").replace("[]", "");
                             depsMap.set(target, {
                                 target,
@@ -30,9 +31,11 @@ export class DependencyExtractor implements GraphExtractor<DependencyResult> {
 
         if (input.source) {
             if (input.source.includes("@openzeppelin/contracts/token/ERC20")) {
+                // ADR-014: detected_from = "source imports" ← dependency inferred from openzeppelin token import path
                 if (!depsMap.has("IERC20")) depsMap.set("IERC20", { target: "IERC20", detected_from: "source imports", evidence: "import @openzeppelin...ERC20" });
             }
             if (input.source.includes("@openzeppelin/contracts/token/ERC721")) {
+                // ADR-014: detected_from = "source imports" ← dependency inferred from openzeppelin token import path
                 if (!depsMap.has("IERC721")) depsMap.set("IERC721", { target: "IERC721", detected_from: "source imports", evidence: "import @openzeppelin...ERC721" });
             }
         }

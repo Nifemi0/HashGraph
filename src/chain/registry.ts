@@ -28,11 +28,21 @@ const REGISTRY_ABI = [
   },
 ] as const;
 
+// HashGraphRegistry was deployed on HashKey Testnet (see deployments/hashkeyTestnet.json).
+// Attestation lookup/register stay on testnet unless REGISTRY_RPC_URL overrides.
 const HASHKEY_CHAIN = {
-  id: 133,
-  name: "HashKey Testnet",
+  id: Number(process.env.REGISTRY_CHAIN_ID ?? 133),
+  name: process.env.REGISTRY_CHAIN_NAME ?? "HashKey Testnet",
   nativeCurrency: { name: "HSK", symbol: "HSK", decimals: 18 },
-  rpcUrls: { default: { http: [process.env.HASHKEY_TESTNET_RPC_URL ?? "https://testnet.hsk.xyz"] } },
+  rpcUrls: {
+    default: {
+      http: [
+        process.env.REGISTRY_RPC_URL ??
+          process.env.HASHKEY_TESTNET_RPC_URL ??
+          "https://testnet.hsk.xyz",
+      ],
+    },
+  },
 } as const;
 
 export interface RegistryAttestation {

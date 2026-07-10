@@ -1,15 +1,17 @@
-import { createPublicClient, http, Address, Hex, parseAbi } from 'viem';
+import { createPublicClient, http, Address, Hex } from 'viem';
 
-const HASHKEY_TESTNET = {
-  id: 133,
-  name: "HashKey Testnet",
+// Demo contracts + Blockscout live on HashKey Mainnet (chain id 177).
+// Prefer HASHKEY_RPC_URL; fall back to public mainnet RPC.
+const HASHKEY_MAINNET = {
+  id: 177,
+  name: "HashKey Mainnet",
   nativeCurrency: { name: "HSK", symbol: "HSK", decimals: 18 },
-  rpcUrls: { default: { http: [process.env.HASHKEY_TESTNET_RPC_URL ?? "https://testnet.hsk.xyz"] } },
+  rpcUrls: { default: { http: [process.env.HASHKEY_RPC_URL ?? process.env.RPC_URL ?? "https://mainnet.hsk.xyz"] } },
 } as const;
 
 export class TransactionSimulator {
     private client = createPublicClient({
-        chain: HASHKEY_TESTNET,
+        chain: HASHKEY_MAINNET,
         transport: http()
     });
 

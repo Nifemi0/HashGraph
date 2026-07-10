@@ -1,14 +1,14 @@
 import { createPublicClient, http, Address } from 'viem';
 
-const HASHKEY_TESTNET = {
-  id: 133,
-  name: "HashKey Testnet",
+const HASHKEY_MAINNET = {
+  id: 177,
+  name: "HashKey Mainnet",
   nativeCurrency: { name: "HSK", symbol: "HSK", decimals: 18 },
-  rpcUrls: { default: { http: [process.env.HASHKEY_TESTNET_RPC_URL ?? "https://testnet.hsk.xyz"] } },
+  rpcUrls: { default: { http: [process.env.HASHKEY_RPC_URL ?? process.env.RPC_URL ?? "https://mainnet.hsk.xyz"] } },
 } as const;
 
 export class BytecodeDecompiler {
-    private client = createPublicClient({ chain: HASHKEY_TESTNET, transport: http() });
+    private client = createPublicClient({ chain: HASHKEY_MAINNET, transport: http() });
 
     public async generatePseudoAbi(address: string): Promise<string | null> {
         const bytecode = await this.client.getBytecode({ address: address as Address });

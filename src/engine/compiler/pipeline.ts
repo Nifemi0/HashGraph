@@ -1,3 +1,13 @@
+/**
+ * @file pipeline.ts
+ * @description Orchestrates the deterministic compiling pipeline for HashGraph.
+ * Wires together pure extractor stages, integrity builders, scorers, and assemblers.
+ *
+ * Adheres to:
+ * - ADR-013: Compiler Stages Are Pure. Operates as a pure orchestrator, collecting
+ *   deterministic facts without network requests, LLM interactions, or mutating shared state.
+ */
+
 import { 
     CompilerInput, 
     CompilerDiagnostics, 
@@ -15,6 +25,7 @@ import { GraphAssembler } from "./graph.assembler";
 import { HashGraphSchema } from "../../types/schema";
 import crypto from "crypto";
 import { lookupGraph } from "../../chain/registry";
+
 
 export class CompilerPipeline {
     private roleExtractor = new RoleExtractor();

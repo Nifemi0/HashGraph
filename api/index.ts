@@ -1,11 +1,40 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
+import fs from "fs";
 import { isAddress } from "viem";
 import { HashGraphClient } from "../src/sdk/client";
 import { MermaidExporter } from "../src/engine/export/mermaid";
 
 const app = express();
 app.use(cors());
+
+// Security size limits
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ limit: "1mb", extended: true }));
+
+// Security headers and Content Security Policy (CSP)
+app.use((req, res, next) => {
+    res.setHeader(
+        "Content-Security-Policy",
+        "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
+    );
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    next();
+});
+
+// Serve swagger.json OpenAPI Spec
+app.get("/swagger.json", (req, res) => {
+    try {
+        const filePath = path.join(process.cwd(), "swagger.json");
+        const fileContent = fs.readFileSync(filePath, "utf8");
+        return res.setHeader("Content-Type", "application/json").send(fileContent);
+    } catch (err: any) {
+        return res.status(500).json({ error: "Failed to load API spec: " + err.message });
+    }
+});
 
 const client = new HashGraphClient();
 
@@ -15,7 +44,9 @@ const LIMIT = 30; // 30 requests per minute
 const WINDOW = 60 * 1000;
 
 const rateLimiter = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const ip = (req.headers["x-forwarded-for"] as string || req.socket.remoteAddress || "unknown").split(",")[0].trim();
+    const rawIp = req.headers["x-forwarded-for"];
+    const ipStr = (Array.isArray(rawIp) ? rawIp[0] : rawIp) || req.socket.remoteAddress || "unknown";
+    const ip = (ipStr || "unknown").split(",")[0]?.trim() || "unknown";
     const now = Date.now();
     const clientLimit = ipCache.get(ip);
     
@@ -57,13 +88,13 @@ const handler = async (req: express.Request, res: express.Response) => {
             `Found ${graph.statistics.dependencies} dependencies`
         ].join("\\n");
 
-        res.json({
+        return res.json({
             graph,
             mermaid,
             trace
         });
     } catch (e: any) {
-        res.status(500).json({ error: e.message });
+        return res.status(500).json({ error: e.message });
     }
 };
 

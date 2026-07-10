@@ -8,7 +8,8 @@ export class EventExtractor implements GraphExtractor<EventResult> {
 
         if (input.abi) {
             for (const item of input.abi) {
-                if ((item.type === "event" || item.type === "error") && item.name) {
+                if (item && (item.type === "event" || item.type === "error") && item.name) {
+                    // ADR-014: source = "ABI" ← events/errors extracted directly from verified ABI specifications
                     events.push({
                         name: item.type === "error" ? `[Error] ${item.name}` : item.name,
                         source: "ABI"

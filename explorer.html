@@ -19,10 +19,19 @@
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Inter:wght@300..600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/tokens.css">
+    <script>
+        // Dark Mode: apply saved preference instantly (prevents flash)
+        if (localStorage.getItem('hashgraph-theme') === 'dark' ||
+            (!localStorage.getItem('hashgraph-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -45,6 +54,7 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #FAFAFA; color: #171717; }
+        html.dark body { background-color: #0A0A0A; color: #F4F4F5; }
         h1, h2, h3, h4, .font-serif { font-family: 'Newsreader', serif; }
         
         /* Node Graph Animation */
@@ -74,20 +84,24 @@
 <body class="antialiased">
 
 <nav class="fixed top-0 w-full z-50 transition-all duration-300 pt-4 px-4 sm:px-6">
-    <div id="navContainer" class="max-w-5xl mx-auto h-14 flex items-center justify-between gap-4 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm border border-gray-200 rounded-full px-6 md:bg-transparent md:border-transparent md:shadow-none md:px-8">
+    <div id="navContainer" class="max-w-5xl mx-auto h-14 flex items-center justify-between gap-4 transition-all duration-300 bg-white/95 dark:bg-gray-950/95 backdrop-blur-md shadow-sm border border-gray-200 dark:border-gray-800 rounded-full px-6 md:bg-transparent md:border-transparent md:shadow-none md:px-8">
         <a href="index.html" class="flex items-center gap-2 transition-all duration-300 hover:opacity-80">
-            <span class="material-symbols-outlined text-gray-900" style="font-variation-settings: 'FILL' 1;">hexagon</span>
-            <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-gray-900">HashGraph</span>
+            <span class="material-symbols-outlined text-gray-900 dark:text-gray-100" style="font-variation-settings: 'FILL' 1;">hexagon</span>
+            <span class="font-serif font-bold text-lg sm:text-xl tracking-tight text-gray-900 dark:text-gray-100">HashGraph</span>
         </a>
         
-        <div class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium text-gray-500 transition-all duration-300">
-            <a href="docs.html" class="hover:text-gray-900 transition-colors">Docs</a>
-            <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 transition-colors">GitHub</a>
+        <div class="flex items-center gap-4 sm:gap-8 text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 transition-all duration-300">
+            <a href="docs.html" class="hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Docs</a>
+            <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 dark:hover:text-gray-100 transition-colors">GitHub</a>
         </div>
         
         <div class="flex items-center gap-2 sm:gap-4 transition-all duration-300">
-            <span class="hidden xl:inline-block text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1.5 rounded-full">HashKey</span>
-            <a href="explorer.html" class="bg-black text-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-full hover:bg-gray-800 transition-colors flex items-center gap-1.5 sm:gap-2">
+            <button id="darkModeToggle" aria-label="Toggle dark mode" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400">
+                <span class="material-symbols-outlined text-[18px] dark:hidden">dark_mode</span>
+                <span class="material-symbols-outlined text-[18px] hidden dark:inline">light_mode</span>
+            </button>
+            <span class="hidden xl:inline-block text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">HashKey</span>
+            <a href="explorer.html" class="bg-black text-white dark:bg-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-full transition-colors flex items-center gap-1.5 sm:gap-2">
                 Launch <span class="material-symbols-outlined text-[14px] sm:text-[16px]" aria-hidden="true">arrow_forward</span>
             </a>
         </div>
@@ -95,37 +109,37 @@
 </nav>
 <main class="pt-32 pb-24 max-w-5xl mx-auto px-6 min-h-[80vh]">
     <div class="mb-10 text-center">
-        <h1 class="text-4xl font-serif text-gray-900 mb-4">Protocol Explorer</h1>
-        <p class="text-gray-500">Compile any verified HashKey Chain contract into a semantic protocol graph.</p>
+        <h1 class="text-4xl font-serif text-gray-900 dark:text-gray-100 mb-4">Protocol Explorer</h1>
+        <p class="text-gray-500 dark:text-gray-400">Compile any verified HashKey Chain contract into a semantic protocol graph.</p>
     </div>
 
     <!-- Main Explorer UI -->
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+    <div class="bg-white dark:bg-gray-950 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
         
         <!-- Left Panel: Input & Steps -->
-        <div class="w-full md:w-1/3 bg-gray-50 border-r border-gray-200 p-6 flex flex-col">
+        <div class="w-full md:w-1/3 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-6 flex flex-col">
             <div class="mb-8">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Target Contract</label>
+                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Target Contract</label>
                 <div class="flex gap-2">
-                    <input type="text" id="contractInput" aria-label="Contract address" placeholder="0x..." class="w-full px-4 py-2 text-sm font-mono border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent">
-                    <button id="runBtn" class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center">
+                    <input type="text" id="contractInput" aria-label="Contract address" placeholder="0x..." class="w-full px-4 py-2 text-sm font-mono border border-gray-300 dark:border-gray-700 dark:bg-gray-850 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent">
+                    <button id="runBtn" class="bg-black text-white dark:bg-white dark:text-black px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center">
                         <span class="material-symbols-outlined text-[18px]" aria-hidden="true">play_arrow</span>
                     </button>
                 </div>
-                <p class="text-[11px] text-gray-500 mt-2">
-                    Supported: <span class="font-semibold text-gray-700">HashKey Chain</span>. Try: 
-                    <span onclick="document.getElementById('contractInput').value = '0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029'" class="underline cursor-pointer hover:text-black transition-colors font-mono font-bold">CELA</span>, 
-                    <span onclick="document.getElementById('contractInput').value = '0x06D116F366EA95e949D9ff85756F170F6227D043'" class="underline cursor-pointer hover:text-black transition-colors font-mono font-bold">veHSK</span>, or 
-                    <span onclick="document.getElementById('contractInput').value = '0xcd32e361b60d50dbca08a7feb22b9ab38fa73813'" class="underline cursor-pointer hover:text-black transition-colors font-mono font-bold">DOGS</span>
+                <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-2">
+                    Supported: <span class="font-semibold text-gray-700 dark:text-gray-300">HashKey Chain</span>. Try: 
+                    <span onclick="document.getElementById('contractInput').value = '0xF1B50eD67A9e2CC94Ad3c477779E2d4cBfFf9029'" class="underline cursor-pointer hover:text-black dark:hover:text-white transition-colors font-mono font-bold">CELA</span>,
+                    <span onclick="document.getElementById('contractInput').value = '0xB210D2120d57b758EE163cFfb43e73728c471Cf1'" class="underline cursor-pointer hover:text-black dark:hover:text-white transition-colors font-mono font-bold">WHSK</span>, or
+                    <span onclick="document.getElementById('contractInput').value = '0xF9fB2302DA48d5715b10921CEC3b82c99ACb39AC'" class="underline cursor-pointer hover:text-black dark:hover:text-white transition-colors font-mono font-bold">DOGS</span>
                 </p>
                 <div id="errorMsg" class="text-red-500 text-xs mt-2 hidden"></div>
             </div>
 
             <div class="flex-1">
-                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Compilation Pipeline</label>
+                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Compilation Pipeline</label>
                 <div id="pipelineSteps" class="space-y-4">
                     <!-- Steps will be injected here via JS -->
-                    <div class="text-sm text-gray-400 italic">Waiting for input...</div>
+                    <div class="text-sm text-gray-400 dark:text-gray-500 italic">Waiting for input...</div>
                 </div>
             </div>
         </div>
@@ -266,40 +280,40 @@
         }
     });
 </script>
-<footer class="py-12 bg-white border-t border-gray-100">
+<footer class="py-12 bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div class="flex flex-col gap-4">
-            <a href="index.html" class="flex items-center gap-2 text-gray-900 hover:text-black transition-colors">
+            <a href="index.html" class="flex items-center gap-2 text-gray-900 dark:text-gray-100 hover:text-black dark:hover:text-white transition-colors">
                 <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">hexagon</span>
                 <span class="font-serif font-bold text-lg">HashGraph</span>
             </a>
-            <div class="text-xs text-gray-400">
+            <div class="text-xs text-gray-400 dark:text-gray-500">
                 © 2024 HashGraph Protocol.<br>Deterministic by design.
             </div>
         </div>
         
         <div>
-            <h4 class="font-semibold text-gray-900 mb-4 text-sm">Product</h4>
-            <div class="flex flex-col gap-3 text-sm text-gray-500">
-                <a href="explorer.html" class="hover:text-gray-900">Explorer</a>
-                <a href="docs.html" class="hover:text-gray-900">Documentation</a>
+            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm">Product</h4>
+            <div class="flex flex-col gap-3 text-sm text-gray-500 dark:text-gray-400">
+                <a href="explorer.html" class="hover:text-gray-900 dark:hover:text-gray-200">Explorer</a>
+                <a href="docs.html" class="hover:text-gray-900 dark:hover:text-gray-200">Documentation</a>
             </div>
         </div>
         
         <div>
-            <h4 class="font-semibold text-gray-900 mb-4 text-sm">Developers</h4>
-            <div class="flex flex-col gap-3 text-sm text-gray-500">
-                <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900">GitHub</a>
-                <a href="docs.html#sdk" class="hover:text-gray-900">SDK</a>
-                <a href="docs.html#mcp" class="hover:text-gray-900">MCP Server</a>
+            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm">Developers</h4>
+            <div class="flex flex-col gap-3 text-sm text-gray-500 dark:text-gray-400">
+                <a href="https://github.com/Nifemi0/HashGraph" class="hover:text-gray-900 dark:hover:text-gray-200">GitHub</a>
+                <a href="docs.html#sdk" class="hover:text-gray-900 dark:hover:text-gray-200">SDK</a>
+                <a href="docs.html#mcp" class="hover:text-gray-900 dark:hover:text-gray-200">MCP Server</a>
             </div>
         </div>
         
         <div>
-            <h4 class="font-semibold text-gray-900 mb-4 text-sm">Resources</h4>
-            <div class="flex flex-col gap-3 text-sm text-gray-500">
-                <a href="docs.html#schema" class="hover:text-gray-900">Schema Protocol</a>
-                <a href="docs.html#pipeline" class="hover:text-gray-900">Architecture</a>
+            <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4 text-sm">Resources</h4>
+            <div class="flex flex-col gap-3 text-sm text-gray-500 dark:text-gray-400">
+                <a href="docs.html#schema" class="hover:text-gray-900 dark:hover:text-gray-200">Schema Protocol</a>
+                <a href="docs.html#pipeline" class="hover:text-gray-900 dark:hover:text-gray-200">Architecture</a>
             </div>
         </div>
     </div>
@@ -308,17 +322,33 @@
 <script>
     // Navbar Scroll Effect
     const navContainer = document.getElementById('navContainer');
-    
     if(navContainer) {
         window.addEventListener('scroll', () => {
-            if (window.innerWidth < 768) return; // Keep solid pill on mobile always
+            if (window.innerWidth < 768) return;
+            const isDark = document.documentElement.classList.contains('dark');
             if (window.scrollY > 20) {
-                navContainer.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
                 navContainer.classList.remove('md:bg-transparent', 'md:border-transparent', 'md:shadow-none');
+                if (isDark) {
+                    navContainer.classList.add('bg-gray-950/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-800');
+                    navContainer.classList.remove('bg-white/95', 'border-gray-200');
+                } else {
+                    navContainer.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                    navContainer.classList.remove('bg-gray-950/95', 'border-gray-800');
+                }
             } else {
-                navContainer.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200');
+                navContainer.classList.remove('bg-white/95', 'bg-gray-950/95', 'backdrop-blur-md', 'shadow-sm', 'border-gray-200', 'border-gray-800');
                 navContainer.classList.add('md:bg-transparent', 'md:border-transparent', 'md:shadow-none');
             }
+        });
+    }
+
+    // Dark Mode Toggle
+    const darkToggle = document.getElementById('darkModeToggle');
+    if (darkToggle) {
+        darkToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('hashgraph-theme', isDark ? 'dark' : 'light');
         });
     }
 </script>

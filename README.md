@@ -19,6 +19,18 @@ LLMs understand code, but they don't understand protocols. A protocol is an emer
 
 ## Installation
 
+### Use as an MCP Server (recommended)
+
+```bash
+# Install the HashGraph MCP server globally
+npm install -g hashgraph-mcp
+
+# Or run directly without installing
+npx -y hashgraph-mcp
+```
+
+### Local Development
+
 ```bash
 # Clone the repository
 git clone https://github.com/Nifemi0/HashGraph.git
@@ -105,16 +117,19 @@ Once integrated, restart your AI client, open a chat, and ask questions like:
 
 ## Available MCP Tools
 
-HashGraph exposes the following tools directly to your AI client:
-- `get_protocol_graph(address)`: Compiles a smart contract into a structured JSON graph containing roles, dependencies, events, and intent.
-- `get_contract_summary(address)`: Returns a lightweight structural and metadata overview of a contract.
-- `explain_transaction(address, calldata)`: Decodes raw transaction calldata and evaluates safety.
-- `search_protocol(address, query)`: Searches the cached protocol graphs for privileges, standard interfaces, or variables.
-- `simulate_transaction(to, data, from, value)`: Simulates a transaction against the blockchain to see its outcome.
-- `read_contract(address, data)`: Reads state variables or view functions directly.
-- `get_source_code(address)`: Fetches fully resolved, unflattened Solidity source code for verified contracts.
-- `lookup_graph_attestation(address)`: Checks the on-chain HashKey Mainnet attestation registry.
-- `register_protocol_graph(address)`: Registers a deterministic protocol graph hash (gated by default).
+HashGraph exposes the following 9 tools directly to your AI client:
+
+| # | Tool | Parameters | Description |
+|---|------|-----------|-------------|
+| 1 | `get_protocol_graph` | `address` | Compiles a smart contract into a structured JSON graph containing roles, dependencies, events, and intent. |
+| 2 | `get_contract_summary` | `address` | Returns a lightweight structural and metadata overview. |
+| 3 | `explain_transaction` | `address`, `calldata` | Decodes raw transaction calldata and evaluates safety. |
+| 4 | `search_protocol` | `address`, `query` | Searches the cached protocol graphs for privileges, interfaces, or variables. |
+| 5 | `simulate_transaction` | `to`, `data`, `from?`, `value?` | Simulates a transaction to see its outcome without writing state. |
+| 6 | `read_contract` | `address`, `data` | Reads state variables or view functions directly. |
+| 7 | `get_source_code` | `address` | Fetches fully resolved, unflattened Solidity source code. |
+| 8 | `lookup_graph_attestation` | `address` | Checks the on-chain HashKey Mainnet attestation registry. |
+| 9 | `register_protocol_graph` | `address`, `graphHash`, `metadataURI` | Registers a protocol graph hash (gated by default). |
 
 ---
 
@@ -155,7 +170,22 @@ npm run dashboard
 **"Why HashKey?"**
 > Better developer tooling reduces integration friction. HashGraph makes HashKey protocols easier for both developers and AI coding agents to understand, which can accelerate ecosystem adoption.
 
+---
 
+## Version History
+
+Version history is auto-generated from git tags. Run `node scripts/version.js` to update.
+
+See [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md) for the full changelog.
+
+## CI / CD
+
+This project uses GitHub Actions for continuous integration:
+
+- **On every push / PR:** Type-check → Test → Security Audit → Build
+- **On release tag:** All the above + publish to npm
+
+See [`.github/workflows/ci.yml`](.github/workflows/ci.yml) for details.
 
 ## License
 MIT License

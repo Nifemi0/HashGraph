@@ -1,11 +1,40 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
+import fs from "fs";
 import { HashGraphClient } from "../sdk/client";
 import { MermaidExporter } from "../engine/export/mermaid";
 
 const app = express();
 app.use(cors());
+
+// Security size limits
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ limit: "1mb", extended: true }));
+
+// Security headers and Content Security Policy (CSP)
+app.use((req, res, next) => {
+    res.setHeader(
+        "Content-Security-Policy",
+        "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
+    );
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    next();
+});
+
+// Serve swagger.json OpenAPI Spec
+app.get("/swagger.json", (req, res) => {
+    try {
+        const filePath = path.join(process.cwd(), "swagger.json");
+        const fileContent = fs.readFileSync(filePath, "utf8");
+        return res.setHeader("Content-Type", "application/json").send(fileContent);
+    } catch (err: any) {
+        return res.status(500).json({ error: "Failed to load API spec: " + err.message });
+    }
+});
+
 app.use(express.static(path.join(process.cwd(), "src/dashboard")));
 
 const client = new HashGraphClient();
@@ -28,13 +57,13 @@ app.get("/api/compile", async (req, res) => {
             `Found ${graph.statistics.dependencies} dependencies`
         ].join("\\n");
 
-        res.json({
+        return res.json({
             graph,
             mermaid,
             trace
         });
     } catch (e: any) {
-        res.status(500).json({ error: e.message });
+        return res.status(500).json({ error: e.message });
     }
 });
 

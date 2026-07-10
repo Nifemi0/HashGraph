@@ -9,10 +9,10 @@ export class FunctionExtractor implements GraphExtractor<FunctionResult> {
 
         if (input.abi) {
             for (const item of input.abi) {
-                if (item.type === "function") {
+                if (item && item.type === "function") {
                     const isViewOrPure = item.stateMutability === "view" || item.stateMutability === "pure";
                     
-                    const isPrivileged = !isViewOrPure && (
+                    const isPrivileged = !isViewOrPure && typeof item.name === "string" && (
                         item.name.startsWith("set") ||
                         item.name.startsWith("update") ||
                         item.name === "pause" ||
@@ -27,15 +27,17 @@ export class FunctionExtractor implements GraphExtractor<FunctionResult> {
                         ? item.stateMutability : "external";
 
                     if (isPrivileged) {
+                        // ADR-014: classification = "privileged" ← determined by state mutation heuristics (prefixes like set/update/mint/burn/pause/upgrade)
                         privileged.push({
-                            name: item.name,
+                            name: item.name || "",
                             classification: "privileged",
                             reason: "state mutation heuristic",
                             visibility
                         });
                     } else if (visibility !== "private" && visibility !== "internal") {
+                        // ADR-014: classification = "read-only" or "public mutator" ← derived from stateMutability (pure/view means read-only, nonpayable/payable means mutator)
                         publicFuncs.push({
-                            name: item.name,
+                            name: item.name || "",
                             classification: isViewOrPure ? "read-only" : "public mutator",
                             reason: isViewOrPure ? "no state mutation" : "standard state mutation",
                             visibility

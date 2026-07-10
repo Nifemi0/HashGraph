@@ -1,0 +1,165 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "HashGraph API",
+    "description": "Deterministic smart contract compiler & semantic layer for HashKey Chain",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/compile": {
+      "get": {
+        "summary": "Compile contract ABI and source code",
+        "description": "Fetches verified smart contract ABI and source from explorer, resolves proxies, deterministically extracts structural facts, and enriches semantically.",
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": true,
+            "description": "EVM smart contract address on HashKey Chain",
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Compilation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter"
+          },
+          "429": {
+            "description": "Rate limit exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/analyze": {
+      "get": {
+        "summary": "Analyze contract and return Protocol Graph",
+        "description": "Alias for /api/compile. Evaluates the contract structural properties and returns JSON and Mermaid structures.",
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": true,
+            "description": "EVM smart contract address on HashKey Chain",
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{40}$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Analysis successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompileResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CompileResponse": {
+        "type": "object",
+        "properties": {
+          "graph": {
+            "type": "object",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "protocol_name": { "type": "string" },
+                  "contract_address": { "type": "string" },
+                  "compiler_version": { "type": "string" },
+                  "is_proxy": { "type": "boolean" },
+                  "implementation": { "type": "string" }
+                }
+              },
+              "structural": {
+                "type": "object",
+                "properties": {
+                  "roles": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "dependencies": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "target": { "type": "string" },
+                        "type": { "type": "string" }
+                      }
+                    }
+                  },
+                  "events": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "functions": { "type": "integer" }
+                }
+              },
+              "semantic": {
+                "type": "object",
+                "properties": {
+                  "intent": { "type": "string" },
+                  "user_goal": { "type": "string" }
+                }
+              },
+              "security": {
+                "type": "object",
+                "properties": {
+                  "guardrails": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "privileged_functions": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              },
+              "integrity": {
+                "type": "object",
+                "properties": {
+                  "score": { "type": "integer" },
+                  "evidence": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "mermaid": {
+            "type": "string",
+            "description": "Mermaid.js sequence or class diagram string representing the protocol graph layout"
+          },
+          "trace": {
+            "type": "string",
+            "description": "Compiler tracing logs"
+          }
+        }
+      }
+    }
+  }
+}

@@ -19,7 +19,7 @@ export class BlockscoutRepository implements IExplorerRepository {
   private baseUrl: string;
   private limiter: Bottleneck;
 
-  constructor(baseUrl: string = "https://hashkey.blockscout.com/api") {
+  constructor(baseUrl: string = "https://hsk.blockscout.com/api") {
     this.baseUrl = baseUrl;
     
     // Bottleneck handles concurrency and rate limiting
