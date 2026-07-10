@@ -102,8 +102,8 @@ Meetup / Demo Day registration (if selected): https://luma.com/bljpi0vd
 - [x] Mainnet contract deployed  
 - [x] Contract source verified on explorer  
 - [x] At least one demo attestation (CELA)  
-- [ ] npm latest includes mainnet registry client (`1.0.5`)  
-- [ ] GitHub README shows AI track + mainnet registry  
+- [x] npm latest includes mainnet registry client (`1.0.5`)  
+- [x] GitHub README shows AI track + mainnet registry  
 - [ ] Official hackathon form submitted before July 11 23:59 GMT+8  
 - [ ] Team registration confirmed  
 - [ ] Demo video recorded (optional but recommended)  
